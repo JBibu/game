@@ -25,7 +25,7 @@ script/source = "extends Node
 func _input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and event.keycode == KEY_T:
 		if not dialog_box.is_active:
-			dialog_box.show_dialog(\"Hello, traveler! Welcome to this mysterious world... Press ENTER to continue.\")
+			dialog_box.show_dialog(\"¡Hola, viajero! Bienvenido a este misterioso mundo... Pulsa ENTER para continuar.\")
 "
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_interact"]
@@ -34,7 +34,7 @@ radius = 1.0
 [sub_resource type="GDScript" id="GDScript_test_interact"]
 script/source = "extends Interactable
 
-@export var message: String = \"You interacted with me!\"
+@export var message: String = \"¡Interacción!\"
 
 func _ready() -> void:
 	super._ready()
@@ -98,8 +98,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 1, 3)
 collision_layer = 2
 collision_mask = 0
 script = SubResource("GDScript_test_interact")
-interaction_prompt = "Talk"
-message = "Greetings, adventurer! This is a test NPC. Press E to interact with objects in this world."
+interaction_prompt = "Hablar"
+message = "¡Saludos, aventurero! Este es un NPC de prueba. Pulsa E para interactuar con objetos en este mundo."
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Interactables/TestNPC"]
 shape = SubResource("SphereShape3D_interact")
@@ -112,8 +112,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.5, 3)
 collision_layer = 2
 collision_mask = 0
 script = SubResource("GDScript_test_interact")
-interaction_prompt = "Use Switch"
-message = "Click! The switch has been activated. You could use this to open doors or trigger events."
+interaction_prompt = "Usar Interruptor"
+message = "¡Clic! El interruptor ha sido activado. Podrías usar esto para abrir puertas o activar eventos."
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Interactables/TestSwitch"]
 shape = SubResource("SphereShape3D_interact")

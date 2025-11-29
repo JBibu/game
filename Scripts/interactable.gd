@@ -3,7 +3,7 @@ class_name Interactable
 
 signal interacted
 
-@export var interaction_prompt: String = "Interact"
+@export var interaction_prompt: String = "Interactuar"
 
 func _ready() -> void:
 	collision_layer = 0

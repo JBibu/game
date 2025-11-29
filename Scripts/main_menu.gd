@@ -15,7 +15,7 @@ func _ready() -> void:
 	_update_fullscreen_text()
 
 func _start_game() -> void:
-	get_tree().change_scene_to_file("res://Scenes/devroom.tscn")
+	SceneTransition.change_scene("res://Scenes/intro.tscn")
 
 func _show_options() -> void:
 	main_container.visible = false
@@ -35,4 +35,4 @@ func _toggle_fullscreen() -> void:
 
 func _update_fullscreen_text() -> void:
 	var is_fullscreen := DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN
-	fullscreen_button.text = "Fullscreen: " + ("On" if is_fullscreen else "Off")
+	fullscreen_button.text = "Pantalla completa: " + ("Sí" if is_fullscreen else "No")
