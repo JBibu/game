@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://fo25ke5wvdbg"]
+[gd_scene load_steps=7 format=3 uid="uid://fo25ke5wvdbg"]
 
 [ext_resource type="Script" path="res://Scripts/third_person_character.gd" id="1_script"]
 [ext_resource type="PackedScene" uid="uid://bxar3n2ikmp73" path="res://Assets/Models/animated/male_casual.fbx" id="2_model"]
 [ext_resource type="PackedScene" uid="uid://b74lknwsq6kt5" path="res://Assets/Models/animated/idle (2).fbx" id="3_idle"]
 [ext_resource type="PackedScene" uid="uid://bf5htubjwmvad" path="res://Assets/Models/animated/walking.fbx" id="4_walk"]
 [ext_resource type="PackedScene" uid="uid://bgticl4di67c6" path="res://Assets/Models/animated/running.fbx" id="5_run"]
+[ext_resource type="PackedScene" uid="uid://yknu0pp1k6ue" path="res://Assets/Models/animated/gangnam_style.fbx" id="6_gangnam"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_player"]
 radius = 0.3
@@ -35,4 +36,7 @@ visible = false
 visible = false
 
 [node name="RunAnim" parent="." instance=ExtResource("5_run")]
+visible = false
+
+[node name="GangnamAnim" parent="." instance=ExtResource("6_gangnam")]
 visible = false

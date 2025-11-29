@@ -15,6 +15,7 @@ var camera_rotation: Vector2 = Vector2.ZERO
 @export var camera_max_pitch: float = 45.0
 
 var current_anim: String = ""
+var is_emoting: bool = false
 
 const BLEND_TIME := 0.15
 
@@ -38,6 +39,7 @@ func _setup_animations() -> void:
 		"idle": $IdleAnim,
 		"walk": $WalkAnim,
 		"run": $RunAnim,
+		"gangnam": $GangnamAnim,
 	}
 
 	for anim_name in sources:
@@ -86,6 +88,12 @@ func _input(event: InputEvent) -> void:
 		else:
 			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
+	# Secret emote key
+	if event is InputEventKey and event.pressed and event.keycode == KEY_G:
+		is_emoting = !is_emoting
+		if is_emoting:
+			_play_anim("gangnam")
+
 func _physics_process(delta: float) -> void:
 	camera_pivot.rotation_degrees.x = camera_rotation.x
 	camera_pivot.rotation_degrees.y = camera_rotation.y
@@ -103,17 +111,25 @@ func _physics_process(delta: float) -> void:
 	var is_running := Input.is_key_pressed(KEY_SHIFT)
 	var speed := run_speed if is_running else move_speed
 
-	if direction:
-		velocity.x = direction.x * speed
-		velocity.z = direction.z * speed
+	if is_emoting:
+		if direction:
+			is_emoting = false
+		else:
+			velocity.x = move_toward(velocity.x, 0, move_speed)
+			velocity.z = move_toward(velocity.z, 0, move_speed)
 
-		var target_angle := atan2(direction.x, direction.z)
-		model.rotation.y = lerp_angle(model.rotation.y, target_angle, rotation_speed * delta)
+	if not is_emoting:
+		if direction:
+			velocity.x = direction.x * speed
+			velocity.z = direction.z * speed
 
-		_play_anim("run" if is_running else "walk")
-	else:
-		velocity.x = move_toward(velocity.x, 0, move_speed)
-		velocity.z = move_toward(velocity.z, 0, move_speed)
-		_play_anim("idle")
+			var target_angle := atan2(direction.x, direction.z)
+			model.rotation.y = lerp_angle(model.rotation.y, target_angle, rotation_speed * delta)
+
+			_play_anim("run" if is_running else "walk")
+		else:
+			velocity.x = move_toward(velocity.x, 0, move_speed)
+			velocity.z = move_toward(velocity.z, 0, move_speed)
+			_play_anim("idle")
 
 	move_and_slide()
