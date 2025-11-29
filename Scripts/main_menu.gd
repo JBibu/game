@@ -15,7 +15,7 @@ func _ready() -> void:
 	_update_fullscreen_text()
 
 func _start_game() -> void:
-	get_tree().change_scene_to_file("res://Scenes/character_showcase.tscn")
+	get_tree().change_scene_to_file("res://Scenes/devroom.tscn")
 
 func _show_options() -> void:
 	main_container.visible = false
