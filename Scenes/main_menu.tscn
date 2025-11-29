@@ -1,0 +1,130 @@
+[gd_scene load_steps=3 format=3 uid="uid://bm4xrk8c5qvwl"]
+
+[ext_resource type="Script" path="res://Scripts/main_menu.gd" id="1_menu"]
+[ext_resource type="FontFile" uid="uid://ubnw41y6mfci" path="res://Assets/Fonts/Cinzel-Regular.ttf" id="2_font"]
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_menu")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.05, 0.05, 0.08, 1)
+
+[node name="MainContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+offset_left = 40.0
+offset_top = 40.0
+offset_right = 250.0
+offset_bottom = 200.0
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="MainContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.85, 0.7, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 28
+text = "PS1"
+
+[node name="Spacer" type="Control" parent="MainContainer"]
+custom_minimum_size = Vector2(0, 16)
+layout_mode = 2
+
+[node name="StartButton" type="Button" parent="MainContainer"]
+layout_mode = 2
+focus_mode = 0
+theme_override_colors/font_color = Color(0.5, 0.48, 0.4, 1)
+theme_override_colors/font_hover_color = Color(1, 0.95, 0.8, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 14
+text = "Start Game"
+flat = true
+alignment = 0
+
+[node name="OptionsButton" type="Button" parent="MainContainer"]
+layout_mode = 2
+focus_mode = 0
+theme_override_colors/font_color = Color(0.5, 0.48, 0.4, 1)
+theme_override_colors/font_hover_color = Color(1, 0.95, 0.8, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 14
+text = "Options"
+flat = true
+alignment = 0
+
+[node name="QuitButton" type="Button" parent="MainContainer"]
+layout_mode = 2
+focus_mode = 0
+theme_override_colors/font_color = Color(0.5, 0.48, 0.4, 1)
+theme_override_colors/font_hover_color = Color(1, 0.95, 0.8, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 14
+text = "Quit"
+flat = true
+alignment = 0
+
+[node name="OptionsContainer" type="VBoxContainer" parent="."]
+visible = false
+layout_mode = 1
+offset_left = 40.0
+offset_top = 40.0
+offset_right = 250.0
+offset_bottom = 200.0
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="OptionsContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.85, 0.7, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 28
+text = "Options"
+
+[node name="Spacer" type="Control" parent="OptionsContainer"]
+custom_minimum_size = Vector2(0, 16)
+layout_mode = 2
+
+[node name="VolumeRow" type="HBoxContainer" parent="OptionsContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Label" type="Label" parent="OptionsContainer/VolumeRow"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5, 0.48, 0.4, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 14
+text = "Volume"
+
+[node name="VolumeSlider" type="HSlider" parent="OptionsContainer/VolumeRow"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+focus_mode = 0
+min_value = -40.0
+value = -6.0
+
+[node name="FullscreenButton" type="Button" parent="OptionsContainer"]
+layout_mode = 2
+focus_mode = 0
+theme_override_colors/font_color = Color(0.5, 0.48, 0.4, 1)
+theme_override_colors/font_hover_color = Color(1, 0.95, 0.8, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 14
+text = "Fullscreen: Off"
+flat = true
+alignment = 0
+
+[node name="BackButton" type="Button" parent="OptionsContainer"]
+layout_mode = 2
+focus_mode = 0
+theme_override_colors/font_color = Color(0.5, 0.48, 0.4, 1)
+theme_override_colors/font_hover_color = Color(1, 0.95, 0.8, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 14
+text = "Back"
+flat = true
+alignment = 0
