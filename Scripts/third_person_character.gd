@@ -4,6 +4,11 @@ extends CharacterBody3D
 @export var run_speed: float = 8.0
 @export var rotation_speed: float = 10.0
 @export var gravity: float = 9.8
+@export var max_health: int = 10
+
+var health: int = 10
+var invincible: bool = false
+var invincible_time: float = 2.0
 
 @onready var camera_pivot: Node3D = $CameraPivot
 @onready var model: Node3D = $Model
@@ -22,6 +27,7 @@ const BLEND_TIME := 0.15
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	health = max_health
 	_setup_animations()
 
 func _find_anim_player(node: Node) -> AnimationPlayer:
@@ -160,3 +166,37 @@ func get_interaction_prompt() -> String:
 	if nearest_interactable:
 		return "[E] " + nearest_interactable.get_prompt()
 	return ""
+
+func take_damage(amount: int) -> void:
+	if invincible:
+		return
+
+	health -= amount
+	invincible = true
+
+	# Flash effect
+	if model:
+		var tween := create_tween()
+		tween.tween_callback(func(): _set_model_visible(false))
+		tween.tween_interval(0.1)
+		tween.tween_callback(func(): _set_model_visible(true))
+		tween.tween_interval(0.1)
+		tween.set_loops(5)
+
+	# Reset invincibility
+	get_tree().create_timer(invincible_time).timeout.connect(func(): invincible = false)
+
+	if health <= 0:
+		_die()
+
+func _set_model_visible(visible: bool) -> void:
+	if model:
+		model.visible = visible
+
+func _die() -> void:
+	# Respawn for now
+	health = max_health
+	global_position = Vector3(0, 1, 0)
+
+func get_health() -> int:
+	return health

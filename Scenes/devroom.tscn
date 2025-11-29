@@ -1,9 +1,11 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="PackedScene" path="res://Scenes/third_person_character.tscn" id="1_mc8ns"]
 [ext_resource type="Material" uid="uid://4mjx783rv4iu" path="res://Materials/psx_ground_material.tres" id="2_vx73m"]
 [ext_resource type="PackedScene" path="res://Scenes/dialog_box.tscn" id="3_dialog"]
 [ext_resource type="PackedScene" path="res://Scenes/interaction_prompt.tscn" id="4_prompt"]
+[ext_resource type="PackedScene" path="res://Scenes/enemy.tscn" id="5_enemy"]
+[ext_resource type="PackedScene" path="res://Scenes/health_ui.tscn" id="6_health"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_xh2yk"]
 size = Vector2(50, 50)
@@ -83,6 +85,8 @@ size = Vector3(2, 2, 2)
 
 [node name="InteractionPrompt" parent="." instance=ExtResource("4_prompt")]
 
+[node name="HealthUI" parent="." instance=ExtResource("6_health")]
+
 [node name="DialogTester" type="Node" parent="."]
 script = SubResource("GDScript_dialog_test")
 
@@ -116,3 +120,9 @@ shape = SubResource("SphereShape3D_interact")
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Interactables/TestSwitch"]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
 mesh = SubResource("BoxMesh_j3y8r")
+
+[node name="Enemies" type="Node3D" parent="."]
+
+[node name="TestEnemy" parent="Enemies" instance=ExtResource("5_enemy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, -8)
+patrol_points = Array[Vector3]([Vector3(-8, 0, -8), Vector3(-8, 0, 8), Vector3(8, 0, 8), Vector3(8, 0, -8)])
