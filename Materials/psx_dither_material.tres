@@ -1,0 +1,8 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://b5agseeq31tfa"]
+
+[ext_resource type="Shader" uid="uid://5c7cybt6nu3u" path="res://Assets/Shaders/psx_dither.gdshader" id="1"]
+
+[resource]
+shader = ExtResource("1")
+shader_parameter/color_depth = 5
+shader_parameter/dithering = true
