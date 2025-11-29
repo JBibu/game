@@ -8,6 +8,7 @@ extends CharacterBody3D
 @onready var camera_pivot: Node3D = $CameraPivot
 @onready var model: Node3D = $Model
 @onready var anim_player: AnimationPlayer = $AnimationPlayer
+var nearest_interactable: Interactable = null
 
 var camera_rotation: Vector2 = Vector2.ZERO
 @export var camera_sensitivity: float = 0.3
@@ -94,9 +95,17 @@ func _input(event: InputEvent) -> void:
 		if is_emoting:
 			_play_anim("gangnam")
 
+	# Interact
+	if event is InputEventKey and event.pressed and event.keycode == KEY_E:
+		if nearest_interactable:
+			nearest_interactable.interact()
+
 func _physics_process(delta: float) -> void:
 	camera_pivot.rotation_degrees.x = camera_rotation.x
 	camera_pivot.rotation_degrees.y = camera_rotation.y
+
+	# Check for interactables
+	_check_interactables()
 
 	# Gravity
 	if not is_on_floor():
@@ -133,3 +142,21 @@ func _physics_process(delta: float) -> void:
 			_play_anim("idle")
 
 	move_and_slide()
+
+func _check_interactables() -> void:
+	var closest: Interactable = null
+	var closest_dist := 999.0
+
+	for area in $InteractionArea.get_overlapping_areas():
+		if area is Interactable:
+			var dist := global_position.distance_to(area.global_position)
+			if dist < closest_dist:
+				closest_dist = dist
+				closest = area
+
+	nearest_interactable = closest
+
+func get_interaction_prompt() -> String:
+	if nearest_interactable:
+		return "[E] " + nearest_interactable.get_prompt()
+	return ""

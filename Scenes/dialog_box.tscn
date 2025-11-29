@@ -33,5 +33,16 @@ theme_override_font_sizes/font_size = 24
 text = ""
 autowrap_mode = 2
 
+[node name="ContinueLabel" type="Label" parent="Panel"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 16
+text = "Press E to continue..."
+horizontal_alignment = 2
+vertical_alignment = 2
+
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_sound")

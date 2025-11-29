@@ -1,0 +1,42 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="FontFile" path="res://Assets/Fonts/CormorantGaramond.ttf" id="1_font"]
+
+[sub_resource type="GDScript" id="GDScript_prompt"]
+script/source = "extends CanvasLayer
+
+@onready var label: Label = $Label
+
+func _process(_delta: float) -> void:
+	var player = get_tree().current_scene.get_node_or_null(\"ThirdPersonCharacter\")
+	if player and player.has_method(\"get_interaction_prompt\"):
+		var prompt = player.get_interaction_prompt()
+		label.text = prompt
+		label.visible = prompt != \"\"
+	else:
+		label.visible = false
+"
+
+[node name="InteractionPrompt" type="CanvasLayer"]
+script = SubResource("GDScript_prompt")
+
+[node name="Label" type="Label" parent="."]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -100.0
+offset_top = -160.0
+offset_right = 100.0
+offset_bottom = -130.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 20
+text = "[E] Interact"
+horizontal_alignment = 1
+vertical_alignment = 1
