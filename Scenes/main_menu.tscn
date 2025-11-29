@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://bm4xrk8c5qvwl"]
+[gd_scene load_steps=4 format=3 uid="uid://bm4xrk8c5qvwl"]
 
 [ext_resource type="Script" path="res://Scripts/main_menu.gd" id="1_menu"]
 [ext_resource type="FontFile" path="res://Assets/Fonts/CormorantGaramond.ttf" id="2_font"]
+[ext_resource type="AudioStream" path="res://Assets/Sounds/Music/00-menu.wav" id="3_music"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -128,3 +129,7 @@ theme_override_font_sizes/font_size = 28
 text = "Back"
 flat = true
 alignment = 0
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_music")
+autoplay = true
