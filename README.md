@@ -9,7 +9,7 @@ Eres un chavalín más que está de fiesta por Murcia durante el 1200 aniversari
 
 ## Autores
 - [**Jbibu**](https://github.com/JBibu)  (Programación, modelado 3d, historia, audios)
-- [**Maria**](https://github.com/MariaMartinezRos) (Ilustración, modelado 3d, historia, [página de ich io](https://mariamartinezros.itch.io/tasca-story))
+- [**Maria**](https://github.com/MariaMartinezRos) (Ilustración, modelado 3d, historia, [página de itch io](https://mariamartinezros.itch.io/tasca-story))
 
 ## Ilustraciones
 Todas las ilustraciones han sido creadas a mano (Photoshop).
