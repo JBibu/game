@@ -13,14 +13,18 @@ extends CharacterBody3D
 
 # Health
 @export var max_health: int = 100
-@export var heal_amount: int = 5
-@export var heal_interval: float = 3.0
+@export var heal_amount: int = 1
+@export var heal_interval: float = 0.3
 @export var heal_delay: float = 5.0
+@export var low_health_threshold: float = 0.4
 var health: int = 100
 var invincible: bool = false
 var invincible_time: float = 2.0
 var time_since_damage: float = 0.0
 var heal_timer: float = 0.0
+var low_health_overlay: ColorRect = null
+var sfx_heartbeat: AudioStreamPlayer = null
+var heartbeat_timer: float = 0.0
 
 # Combat
 @export var attack_damage: int = 25
@@ -30,7 +34,8 @@ var can_attack: bool = true
 var is_attacking: bool = false
 
 # Node references
-@onready var camera_pivot: Node3D = $CameraPivot
+@onready var camera_pivot: SpringArm3D = $CameraPivot
+@onready var camera: Camera3D = $CameraPivot/Camera3D
 @onready var model: Node3D = $Model
 @onready var anim_player: AnimationPlayer = $AnimationPlayer
 @onready var attack_anim_player: AnimationPlayer = $AttackAnimPlayer
@@ -65,12 +70,57 @@ func _ready() -> void:
 	_setup_glowstick()
 	_setup_sword()
 	_setup_sounds()
+	_setup_low_health_overlay()
 	Inventory.sword_equipped_changed.connect(_on_sword_equipped_changed)
 
 func _setup_sounds() -> void:
 	sfx_footstep = Utils.create_audio_player(self, "res://Assets/Sounds/SFX/footstep.wav", -18.0)
 	sfx_hurt = Utils.create_audio_player(self, "res://Assets/Sounds/SFX/player_hurt.wav")
 	sfx_sword_swing = Utils.create_audio_player(self, "res://Assets/Sounds/SFX/sword_swing.wav")
+
+func _setup_low_health_overlay() -> void:
+	var canvas_layer := CanvasLayer.new()
+	canvas_layer.layer = 100
+	add_child(canvas_layer)
+
+	low_health_overlay = ColorRect.new()
+	low_health_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	low_health_overlay.color = Color(0.8, 0.0, 0.0, 0.0)
+	canvas_layer.add_child(low_health_overlay)
+	low_health_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+
+	# Setup heartbeat sound
+	sfx_heartbeat = AudioStreamPlayer.new()
+	var heartbeat_path := "res://Assets/Sounds/SFX/heartbeat.wav"
+	if ResourceLoader.exists(heartbeat_path):
+		sfx_heartbeat.stream = load(heartbeat_path)
+	sfx_heartbeat.volume_db = -5.0
+	add_child(sfx_heartbeat)
+
+func _update_low_health_overlay(delta: float) -> void:
+	if not low_health_overlay:
+		return
+
+	var health_percent := float(health) / float(max_health)
+
+	if health_percent <= low_health_threshold:
+		# Intensity increases as health decreases
+		var intensity := 1.0 - (health_percent / low_health_threshold)
+		# Pulsing effect
+		var pulse := (sin(Time.get_ticks_msec() * 0.005) + 1.0) * 0.5
+		var alpha := intensity * 0.4 * (0.5 + pulse * 0.5)
+		low_health_overlay.color = Color(0.5, 0.0, 0.0, alpha)
+
+		# Heartbeat - faster when health is lower
+		var heartbeat_interval: float = lerpf(1.2, 0.5, intensity)
+		heartbeat_timer -= delta
+		if heartbeat_timer <= 0:
+			heartbeat_timer = heartbeat_interval
+			if sfx_heartbeat and sfx_heartbeat.stream:
+				sfx_heartbeat.play()
+	else:
+		low_health_overlay.color.a = 0.0
+		heartbeat_timer = 0.0
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
@@ -142,6 +192,7 @@ func _physics_process(delta: float) -> void:
 	_update_sword()
 	_update_healing(delta)
 	_update_footsteps(delta, direction, is_running)
+	_update_low_health_overlay(delta)
 
 # Animation setup
 
@@ -354,8 +405,24 @@ func _set_model_visible(vis: bool) -> void:
 				child.visible = vis
 
 func _die() -> void:
-	health = max_health
-	global_position = Vector3(0, 1, 0)
+	set_physics_process(false)
+	set_process(false)
+	_play_death_animation()
+
+func _play_death_animation() -> void:
+	# Ragdoll-like death: rotate model to fall down
+	var tween := create_tween()
+	tween.set_parallel(true)
+
+	# Rotate model forward to simulate falling
+	tween.tween_property(model, "rotation:x", deg_to_rad(90), 0.6).set_ease(Tween.EASE_IN)
+	# Drop down slightly
+	tween.tween_property(model, "position:y", -0.5, 0.6).set_ease(Tween.EASE_IN)
+
+	await tween.finished
+	await get_tree().create_timer(1.0).timeout
+
+	SceneTransition.change_scene("res://Scenes/game_over.tscn", 2.0)
 
 func get_health() -> int:
 	return health

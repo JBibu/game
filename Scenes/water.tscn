@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_water"]
+size = Vector2(10, 10)
+
+[sub_resource type="StandardMaterial3D" id="Material_water"]
+transparency = 1
+albedo_color = Color(0.1, 0.2, 0.4, 0.7)
+metallic = 0.3
+roughness = 0.2
+emission_enabled = true
+emission = Color(0.05, 0.1, 0.2, 1)
+emission_energy_multiplier = 0.3
+
+[node name="Water" type="MeshInstance3D"]
+mesh = SubResource("PlaneMesh_water")
+surface_material_override/0 = SubResource("Material_water")

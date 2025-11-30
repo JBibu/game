@@ -1,6 +1,6 @@
 class_name Utils
 
-const BLEND_TIME := 0.15
+const BLEND_TIME := 0.3
 
 static func find_anim_player(node: Node) -> AnimationPlayer:
 	if node is AnimationPlayer:

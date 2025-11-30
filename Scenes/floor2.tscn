@@ -1,0 +1,133 @@
+[gd_scene load_steps=23 format=3 uid="uid://b4la8f46wuxlj"]
+
+[ext_resource type="PackedScene" uid="uid://dpg4nsmr2le08" path="res://Scenes/third_person_character.tscn" id="1_player"]
+[ext_resource type="PackedScene" uid="uid://m2nbymoxfykn" path="res://Assets/Blender/floor2.blend" id="2_map"]
+[ext_resource type="PackedScene" path="res://Scenes/dialog_box.tscn" id="3_dialog"]
+[ext_resource type="PackedScene" path="res://Scenes/interaction_prompt.tscn" id="4_prompt"]
+[ext_resource type="PackedScene" path="res://Scenes/health_ui.tscn" id="5_health"]
+[ext_resource type="AudioStream" uid="uid://chtgniqpxnh04" path="res://Assets/Sounds/Music/01-cave.mp3" id="6_music"]
+[ext_resource type="Script" uid="uid://dn6u7redt6x3y" path="res://Scripts/map_collision_generator.gd" id="7_collision"]
+[ext_resource type="Script" uid="uid://c85tmbmuytigi" path="res://Scripts/floor2.gd" id="8_floor2"]
+[ext_resource type="PackedScene" path="res://Scenes/water.tscn" id="9_water"]
+[ext_resource type="PackedScene" path="res://Scenes/fishing_rod_pickup.tscn" id="10_fishing_rod"]
+[ext_resource type="PackedScene" path="res://Scenes/fishing_spot.tscn" id="11_fishing_spot"]
+[ext_resource type="PackedScene" path="res://Scenes/torch.tscn" id="12_6wmhl"]
+[ext_resource type="PackedScene" path="res://Scenes/enemy.tscn" id="13_1lu0v"]
+[ext_resource type="PackedScene" path="res://Scenes/gem_pedestal.tscn" id="14_pedestal"]
+[ext_resource type="PackedScene" path="res://Scenes/stair_trigger.tscn" id="15_stair"]
+[ext_resource type="Texture2D" uid="uid://ou1wjfxwq480" path="res://Assets/Models/environment/Rocks_W.jpg" id="16_walls_tex"]
+[ext_resource type="PackedScene" uid="uid://s3v3eyjrueto" path="res://Assets/Models/environment/stair1.glb" id="17_stair_mesh"]
+
+[sub_resource type="Environment" id="Environment_dark"]
+background_mode = 1
+ambient_light_source = 2
+ambient_light_energy = 0.0
+
+[sub_resource type="CameraAttributesPractical" id="CameraAttributes_dark"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_water_collider"]
+size = Vector3(10, 4, 10)
+
+[sub_resource type="StandardMaterial3D" id="WallMaterial"]
+albedo_texture = ExtResource("16_walls_tex")
+uv1_scale = Vector3(6, 2, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_wall"]
+size = Vector3(6, 5, 1)
+
+[node name="Floor2" type="Node3D"]
+script = ExtResource("8_floor2")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_dark")
+camera_attributes = SubResource("CameraAttributes_dark")
+
+[node name="ThirdPersonCharacter" parent="." instance=ExtResource("1_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="Map" parent="." instance=ExtResource("2_map")]
+transform = Transform3D(20, 0, 0, 0, 20, 0, 0, 0, 20, 13.506452, 6.5042706, -13.409673)
+script = ExtResource("7_collision")
+
+[node name="DialogBox" parent="." instance=ExtResource("3_dialog")]
+
+[node name="InteractionPrompt" parent="." instance=ExtResource("4_prompt")]
+
+[node name="HealthUI" parent="." instance=ExtResource("5_health")]
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_music")
+autoplay = true
+
+[node name="Water" parent="." instance=ExtResource("9_water")]
+transform = Transform3D(2.86, 0, 0, 0, 1.43, 0, 0, 0, 2.86, 24.418917, -3.2452378, -26.220251)
+
+[node name="FishingRodPickup" parent="." instance=ExtResource("10_fishing_rod")]
+transform = Transform3D(0.026311358, 0.6482394, 1.9129802, -0.008915122, 1.9131612, -0.6481782, -2.0198083, 3.071943e-09, 0.02778069, 8.167513, -1.7271829, -27.437939)
+
+[node name="FishingSpot" parent="." instance=ExtResource("11_fishing_spot")]
+transform = Transform3D(1.41, 0, 0, 0, 1.41, 0, 0, 0, 1.41, 15.101272, -2.5672727, -25.055359)
+reward_item = "gem"
+fish_dialog = "¡Por todos los...! Una gema reluciente. Alguien la debió perder aquí hace siglos. Seguro que tiene algún uso."
+
+[node name="Torch" parent="." instance=ExtResource("12_6wmhl")]
+transform = Transform3D(1, 0, 0, 0, 0.8721376, -0.4892607, 0, 0.4892607, 0.8721376, 6.356739, 0, -15.262036)
+
+[node name="Torch2" parent="." instance=ExtResource("12_6wmhl")]
+transform = Transform3D(-0.117173456, 0.48589042, 0.8661299, 0, 0.8721376, -0.4892607, -0.9931115, -0.057328366, -0.10219137, 7.8362474, 0, -28.476646)
+
+[node name="Torch3" parent="." instance=ExtResource("12_6wmhl")]
+transform = Transform3D(0.84969944, -0.25797117, -0.45984966, 0, 0.8721375, -0.48926064, 0.52726734, 0.41572458, 0.7410549, 32.081516, 0, -28.476646)
+
+[node name="Torch4" parent="." instance=ExtResource("12_6wmhl")]
+transform = Transform3D(0.07360363, -0.48793364, -0.86977196, 1.5713791e-08, 0.8721375, -0.4892606, 0.9972876, 0.036011413, 0.06419256, 26.741964, 0, -9.361811)
+
+[node name="WaterCollider" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, -3, -26)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WaterCollider"]
+transform = Transform3D(0.88739735, 0, 0.46100536, 0, 1, 0, -0.46100536, 0, 0.88739735, -4.452776, 1.8920755, -3.9399948)
+shape = SubResource("BoxShape3D_water_collider")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="WaterCollider"]
+transform = Transform3D(0.892633, 0, 0.45078412, 0, 1, 0, -0.45078412, 0, 0.892633, -0.77322197, 0.85813975, 0.76891136)
+shape = SubResource("BoxShape3D_water_collider")
+
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="WaterCollider"]
+transform = Transform3D(0.3810704, 0, 0.924546, 0, 1, 0, -0.924546, 0, 0.3810704, 4.661791, 1.3124598, 4.89604)
+shape = SubResource("BoxShape3D_water_collider")
+
+[node name="Enemy" parent="WaterCollider" instance=ExtResource("13_1lu0v")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.7748909, 1.6347079, 12.661925)
+
+[node name="Enemy4" parent="WaterCollider" instance=ExtResource("13_1lu0v")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.3234844, 3.6547523, 27.003908)
+
+[node name="Enemy3" parent="WaterCollider" instance=ExtResource("13_1lu0v")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.384474, 1.6347079, 15.365269)
+
+[node name="Enemy2" parent="WaterCollider" instance=ExtResource("13_1lu0v")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.981495, 1.6267118, -5.1128883)
+
+[node name="CorridorWall" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35, 0, -20)
+
+[node name="WallMesh" type="CSGBox3D" parent="CorridorWall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.760265, 0.12449074, 13.403686)
+size = Vector3(17.65, 5, 1)
+material = SubResource("WallMaterial")
+
+[node name="WallCollision" type="CollisionShape3D" parent="CorridorWall"]
+shape = SubResource("BoxShape3D_wall")
+
+[node name="GemPedestal" parent="." instance=ExtResource("14_pedestal")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.20789, -1.2968886, -8.337203)
+wall_node_path = NodePath("../CorridorWall")
+
+[node name="Stair" parent="." instance=ExtResource("17_stair_mesh")]
+transform = Transform3D(-0.14868973, 0, -0.37133726, 0, 0.39999998, 0, 0.37133726, 0, -0.14868973, 22.543379, -0.15082765, 0.8089371)
+script = ExtResource("7_collision")
+
+[node name="StairTrigger" parent="Stair" instance=ExtResource("15_stair")]
+target_scene = "res://Scenes/floor3.tscn"
+prompt_text = "Subir"

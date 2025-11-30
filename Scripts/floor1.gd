@@ -19,27 +19,27 @@ func _generate_environment_colliders() -> void:
 func _start_intro_dialog() -> void:
 	var dialogs: Array[Dictionary] = [
 		{
-			"text": "Ugh... me duele la cabeza...",
+			"text": "Aagh... madre mía, qué dolor de cabeza...",
 			"emotion": "sad"
 		},
 		{
-			"text": "¿Qué ha pasado? ¿Dónde estoy?",
+			"text": "¿Pero qué...? ¿Dónde me he metido?",
 			"emotion": "surprised"
 		},
 		{
-			"text": "Esto no tiene pinta de ser Murcia... ni de lejos.",
+			"text": "Esto desde luego no es el bar. Ni por asomo.",
 			"emotion": "intrigued"
 		},
 		{
-			"text": "Vale, creo que me pasé un poco con la fiesta del aniversario...",
+			"text": "A ver, igual me he pasado un pelín de rosca...",
 			"emotion": "sad"
 		},
 		{
-			"text": "Bueno, bastante. Me pasé bastante.",
+			"text": "Bueno, vale, bastante más que un pelín.",
 			"emotion": "angry"
 		},
 		{
-			"text": "Tengo que encontrar la manera de salir de aquí.",
+			"text": "En fin. Lo primero es lo primero: tengo que encontrar la forma de salir de este agujero.",
 			"emotion": "intrigued"
 		},
 	]

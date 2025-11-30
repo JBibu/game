@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Texture2D" path="res://Assets/Models/environment/abderraman2.png" id="1_texture"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_decor"]
+size = Vector2(1, 1)
+orientation = 2
+
+[sub_resource type="StandardMaterial3D" id="Material_emissive"]
+transparency = 1
+albedo_texture = ExtResource("1_texture")
+uv1_scale = Vector3(0.8, 0.8, 1)
+uv1_offset = Vector3(0.1, 0.1, 0)
+emission_enabled = true
+emission = Color(1, 0.9, 0.5, 1)
+emission_energy_multiplier = 2.0
+emission_texture = ExtResource("1_texture")
+
+[node name="WallDecor" type="MeshInstance3D"]
+mesh = SubResource("PlaneMesh_decor")
+surface_material_override/0 = SubResource("Material_emissive")

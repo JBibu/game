@@ -1,0 +1,44 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="PackedScene" uid="uid://dpg4nsmr2le08" path="res://Scenes/third_person_character.tscn" id="1_player"]
+[ext_resource type="PackedScene" path="res://Scenes/dialog_box.tscn" id="2_dialog"]
+[ext_resource type="PackedScene" path="res://Scenes/interaction_prompt.tscn" id="3_prompt"]
+[ext_resource type="PackedScene" path="res://Scenes/health_ui.tscn" id="4_health"]
+[ext_resource type="AudioStream" uid="uid://chtgniqpxnh04" path="res://Assets/Sounds/Music/01-cave.mp3" id="5_music"]
+[ext_resource type="Script" path="res://Scripts/floor3.gd" id="6_floor3"]
+[ext_resource type="Script" path="res://Scripts/maze_generator.gd" id="7_maze"]
+
+[sub_resource type="Environment" id="Environment_maze"]
+background_mode = 1
+background_color = Color(0, 0, 0, 1)
+ambient_light_source = 0
+ambient_light_energy = 0.0
+
+[sub_resource type="CameraAttributesPractical" id="CameraAttributes_maze"]
+
+[node name="Floor3" type="Node3D"]
+script = ExtResource("6_floor3")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_maze")
+camera_attributes = SubResource("CameraAttributes_maze")
+
+[node name="ThirdPersonCharacter" parent="." instance=ExtResource("1_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="DialogBox" parent="." instance=ExtResource("2_dialog")]
+
+[node name="InteractionPrompt" parent="." instance=ExtResource("3_prompt")]
+
+[node name="HealthUI" parent="." instance=ExtResource("4_health")]
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_music")
+autoplay = true
+
+[node name="Maze" type="Node3D" parent="."]
+script = ExtResource("7_maze")
+cell_size = 6.0
+wall_height = 8.0
+maze_width = 5
+maze_height = 5

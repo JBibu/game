@@ -1,16 +1,16 @@
-[gd_scene load_steps=29 format=3 uid="uid://drcxgmetbefvy"]
+[gd_scene load_steps=30 format=3 uid="uid://drcxgmetbefvy"]
 
 [ext_resource type="PackedScene" uid="uid://dpg4nsmr2le08" path="res://Scenes/third_person_character.tscn" id="1_player"]
-[ext_resource type="PackedScene" uid="uid://bff446houwyok" path="res://Assets/Models/environment/floor1.glb" id="2_map"]
+[ext_resource type="PackedScene" path="res://Assets/Blender/floor1.blend" id="2_map"]
 [ext_resource type="PackedScene" path="res://Scenes/dialog_box.tscn" id="3_dialog"]
 [ext_resource type="PackedScene" path="res://Scenes/interaction_prompt.tscn" id="4_prompt"]
 [ext_resource type="PackedScene" path="res://Scenes/health_ui.tscn" id="5_health"]
-[ext_resource type="AudioStream" uid="uid://chtgniqpxnh04" path="res://Assets/Sounds/Music/01-cave.mp3" id="6_music"]
+[ext_resource type="AudioStream" uid="uid://bbur7ls3kolmo" path="res://Assets/Sounds/Music/01-cave.mp3" id="6_music"]
 [ext_resource type="Script" uid="uid://dn6u7redt6x3y" path="res://Scripts/map_collision_generator.gd" id="7_collision"]
-[ext_resource type="PackedScene" uid="uid://jjtjxxb4e2b" path="res://Assets/Models/environment/stair1.glb" id="8_wxwll"]
+[ext_resource type="PackedScene" uid="uid://b1jbh6hbnuuob" path="res://Assets/Models/environment/stair1.glb" id="8_wxwll"]
 [ext_resource type="PackedScene" path="res://Scenes/enemy.tscn" id="9_juqag"]
 [ext_resource type="PackedScene" path="res://Scenes/stair_trigger.tscn" id="12_stair_trigger"]
-[ext_resource type="PackedScene" uid="uid://bv5aghfa2anl2" path="res://Assets/Models/environment/Mines.fbx" id="13_6uo7t"]
+[ext_resource type="PackedScene" uid="uid://cnx4itytam2fg" path="res://Assets/Models/environment/Mines.fbx" id="13_6uo7t"]
 [ext_resource type="PackedScene" uid="uid://bvpmehar5fhc7" path="res://Scenes/sword_pickup.tscn" id="13_sword_pickup"]
 [ext_resource type="Script" uid="uid://cnndn32vsmpyx" path="res://Scripts/floor1.gd" id="14_floor1"]
 [ext_resource type="ArrayMesh" uid="uid://sn27b3sqw6j4" path="res://Assets/Models/meshes/glock5.res" id="14_hvb01"]
@@ -24,6 +24,7 @@
 [ext_resource type="Script" uid="uid://58c4qk4fy0o3" path="res://Scripts/dialog_trigger.gd" id="22_dialog_trigger"]
 [ext_resource type="PackedScene" path="res://Scenes/chest.tscn" id="23_chest"]
 [ext_resource type="Script" uid="uid://bxep6erfud6jw" path="res://Scripts/door_trigger.gd" id="24_door_trigger"]
+[ext_resource type="PackedScene" path="res://Scenes/wall_decor.tscn" id="25_2p860"]
 
 [sub_resource type="Environment" id="Environment_dark"]
 background_mode = 1
@@ -64,6 +65,7 @@ autoplay = true
 
 [node name="stair1" parent="." instance=ExtResource("8_wxwll")]
 transform = Transform3D(0.08073206, 0, 0.39176822, 0, 0.4, 0, -0.39176822, 0, 0.08073206, -42.609726, 0.29888296, -38.490284)
+script = ExtResource("7_collision")
 
 [node name="Enemy" parent="." instance=ExtResource("9_juqag")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.1643386, 1.675991, -25.690367)
@@ -79,7 +81,8 @@ transform = Transform3D(0.2690375, -0.8133234, -0.515872, 0, 0.5356205, -0.84445
 
 [node name="StairTrigger" parent="." instance=ExtResource("12_stair_trigger")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -42.6, 1.5, -38.5)
-target_scene = "res://Scenes/devroom.tscn"
+target_scene = "res://Scenes/floor2.tscn"
+requires_sword = true
 
 [node name="Mines" parent="." instance=ExtResource("13_6uo7t")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.18888, -942.91547, -6.25123)
@@ -250,3 +253,6 @@ door_node_path = NodePath("../FenceDoor")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="DoorTrigger"]
 shape = SubResource("BoxShape3D_door_trigger")
+
+[node name="WallDecor" parent="." instance=ExtResource("25_2p860")]
+transform = Transform3D(-3.4540884, 0, 0.01979639, 0, 0.3356203, 0, -0.82568383, 0, -0.08281438, -12.076141, 1.7937001, -17.50907)

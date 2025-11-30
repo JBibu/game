@@ -1,8 +1,8 @@
 extends Interactable
 
 @export var requires_key: bool = true
-@export var locked_dialog: String = "Esta puerta esta cerrada. Necesito una llave."
-@export var unlock_dialog: String = "La llave funciona! La puerta se ha abierto."
+@export var locked_dialog: String = "Está cerrada con llave. Tiene que haber una por algún sitio..."
+@export var unlock_dialog: String = "¡Perfecto! La llave encaja. Vía libre."
 @export var door_node_path: NodePath
 
 var is_unlocked: bool = false

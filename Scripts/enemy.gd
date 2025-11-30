@@ -3,12 +3,12 @@ class_name Enemy
 
 enum State { PATROL, CHASE, ATTACK, RETURN }
 
-@export var move_speed: float = 1.5
-@export var chase_speed: float = 2.5
-@export var detection_range: float = 8.0
-@export var lose_range: float = 12.0
-@export var attack_range: float = 1.5
-@export var damage: int = 10
+@export var move_speed: float = 2.0
+@export var chase_speed: float = 3.5
+@export var detection_range: float = 10.0
+@export var lose_range: float = 14.0
+@export var attack_range: float = 1.8
+@export var damage: int = 30
 @export var patrol_points: Array[Vector3] = []
 @export var gravity: float = 9.8
 @export var health: int = 50
@@ -20,6 +20,15 @@ var current_patrol_index: int = 0
 var player: CharacterBody3D = null
 var start_position: Vector3
 var is_attacking: bool = false
+
+# Idle wandering
+var wander_target: Vector3 = Vector3.ZERO
+var wander_timer: float = 0.0
+var wander_wait_timer: float = 0.0
+var is_wandering: bool = false
+@export var wander_radius: float = 3.0
+@export var wander_wait_min: float = 0.5
+@export var wander_wait_max: float = 1.5
 
 # Animation
 @onready var model: Node3D = $Model
@@ -85,29 +94,63 @@ func _physics_process(delta: float) -> void:
 	_update_health_bar_visibility()
 
 func _patrol(delta: float) -> bool:
-	if patrol_points.is_empty():
-		velocity.x = 0
-		velocity.z = 0
-		return false
+	# If we have multiple patrol points, use them
+	if patrol_points.size() > 1:
+		var target := patrol_points[current_patrol_index]
+		var direction := (target - global_position)
+		direction.y = 0
 
-	var target := patrol_points[current_patrol_index]
-	var direction := (target - global_position)
-	direction.y = 0
+		if direction.length() < 0.5:
+			current_patrol_index = (current_patrol_index + 1) % patrol_points.size()
+			return true
+		else:
+			direction = direction.normalized()
+			velocity.x = direction.x * move_speed
+			velocity.z = direction.z * move_speed
+			_face_direction(direction, delta)
+			return true
 
-	if direction.length() < 0.5:
-		current_patrol_index = (current_patrol_index + 1) % patrol_points.size()
-		# If only one patrol point, stay idle
-		if patrol_points.size() == 1:
+	# Random wandering when no patrol points or only one
+	return _wander(delta)
+
+func _wander(delta: float) -> bool:
+	# If currently wandering to a target
+	if is_wandering:
+		var direction := (wander_target - global_position)
+		direction.y = 0
+
+		# Reached target or timer expired
+		if direction.length() < 0.5 or wander_timer <= 0:
+			is_wandering = false
+			wander_wait_timer = randf_range(wander_wait_min, wander_wait_max)
 			velocity.x = 0
 			velocity.z = 0
 			return false
-		return true
-	else:
+
+		wander_timer -= delta
 		direction = direction.normalized()
-		velocity.x = direction.x * move_speed
-		velocity.z = direction.z * move_speed
+		velocity.x = direction.x * move_speed * 0.6  # Slower wandering
+		velocity.z = direction.z * move_speed * 0.6
 		_face_direction(direction, delta)
 		return true
+	else:
+		# Waiting before next wander
+		wander_wait_timer -= delta
+		if wander_wait_timer <= 0:
+			# Pick a new random target within wander radius
+			var random_angle := randf() * TAU
+			var random_dist := randf_range(1.0, wander_radius)
+			wander_target = start_position + Vector3(
+				cos(random_angle) * random_dist,
+				0,
+				sin(random_angle) * random_dist
+			)
+			is_wandering = true
+			wander_timer = 5.0  # Max time to reach target
+
+		velocity.x = 0
+		velocity.z = 0
+		return false
 
 func _chase(delta: float) -> void:
 	if not player:
@@ -220,13 +263,15 @@ func _setup_animations() -> void:
 				var track_path := str(anim.track_get_path(i))
 				var first_part := track_path.split("/")[0] if "/" in track_path else track_path
 
-				# Remove root-only tracks
-				if track_path == first_part and not ":" in track_path:
-					tracks_to_remove.append(i)
-				else:
-					# Remap to Model node
-					var new_path := "Model/" + track_path
-					anim.track_set_path(i, NodePath(new_path))
+				# For walk/idle, remove root position tracks that cause drifting
+				if anim_name != "attack":
+					if track_path == first_part and not ":" in track_path:
+						tracks_to_remove.append(i)
+						continue
+
+				# Remap to Model node
+				var new_path := "Model/" + track_path
+				anim.track_set_path(i, NodePath(new_path))
 
 			tracks_to_remove.reverse()
 			for i in tracks_to_remove:
@@ -392,7 +437,8 @@ func _setup_health_bar() -> void:
 	health_bar.pixel_size = 0.01
 	health_bar.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	health_bar.no_depth_test = true
-	health_bar.position = Vector3(0, bar_height, 0)
+	health_bar.render_priority = 1
+	health_bar.position = Vector3(0, bar_height, 0.01)
 
 	var fg_image := Image.create(50, 6, false, Image.FORMAT_RGBA8)
 	fg_image.fill(Color(0.8, 0.1, 0.1, 1.0))

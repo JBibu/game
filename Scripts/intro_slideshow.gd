@@ -5,10 +5,8 @@ signal finished
 @export var text_speed: float = 0.03
 @export var chars_per_sound: int = 2
 
-@onready var texture_rect: TextureRect = $TextureRect
 @onready var label: Label = $Label
-@onready var placeholder_box: ColorRect = $PlaceholderBox
-@onready var placeholder_label: Label = $PlaceholderLabel
+@onready var slide_image: TextureRect = $SlideImage
 @onready var audio_player: AudioStreamPlayer = $AudioStreamPlayer
 
 var slides: Array[Dictionary] = []
@@ -47,20 +45,30 @@ func _handle_advance() -> void:
 
 func _show_slide(index: int) -> void:
 	can_advance = false
-	current_slide = index
 	var slide = slides[index]
 
-	await _fade_elements(0.0)
+	var new_image = slide.image if slide.has("image") else null
+	var old_image = slide_image.texture
+	var image_changed = (index == 0) or (new_image != old_image)
+
+	current_slide = index
+
+	if image_changed:
+		await _fade_elements(0.0)
+	else:
+		await _fade_text(0.0)
 
 	if slide.has("image") and slide.image:
-		texture_rect.texture = slide.image
+		slide_image.texture = slide.image
 	else:
-		texture_rect.texture = null
+		slide_image.texture = null
 
-	placeholder_label.text = "Placeholder " + str(index + 1)
 	label.text = ""
 
-	await _fade_elements(1.0)
+	if image_changed:
+		await _fade_elements(1.0)
+	else:
+		await _fade_text(1.0)
 
 	var text: String = slide.get("text", "")
 	if text.length() > 0:
@@ -81,17 +89,18 @@ func _finish() -> void:
 	finished.emit()
 
 func _set_elements_alpha(alpha: float) -> void:
-	texture_rect.modulate.a = alpha
 	label.modulate.a = alpha
-	placeholder_box.modulate.a = alpha
-	placeholder_label.modulate.a = alpha
+	slide_image.modulate.a = alpha
 
 func _fade_elements(target_alpha: float, duration: float = 0.5) -> void:
 	var tween := create_tween()
-	tween.tween_property(texture_rect, "modulate:a", target_alpha, duration)
-	tween.parallel().tween_property(label, "modulate:a", target_alpha, duration)
-	tween.parallel().tween_property(placeholder_box, "modulate:a", target_alpha, duration)
-	tween.parallel().tween_property(placeholder_label, "modulate:a", target_alpha, duration)
+	tween.tween_property(label, "modulate:a", target_alpha, duration)
+	tween.parallel().tween_property(slide_image, "modulate:a", target_alpha, duration)
+	await tween.finished
+
+func _fade_text(target_alpha: float, duration: float = 0.3) -> void:
+	var tween := create_tween()
+	tween.tween_property(label, "modulate:a", target_alpha, duration)
 	await tween.finished
 
 func _on_character_typed(_char: String) -> void:

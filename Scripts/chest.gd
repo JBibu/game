@@ -2,7 +2,7 @@ extends Interactable
 class_name Chest
 
 @export var item_name: String = "key"
-@export var dialog_text: String = "Has encontrado una llave!"
+@export var dialog_text: String = "¡Vaya, vaya! Una llave. Seguro que abre alguna puerta por aquí."
 
 var is_opened: bool = false
 

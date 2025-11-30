@@ -6,6 +6,7 @@ extends Control
 @onready var fullscreen_button: Button = $OptionsContainer/FullscreenButton
 
 func _ready() -> void:
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	$MainContainer/StartButton.pressed.connect(_start_game)
 	$MainContainer/OptionsButton.pressed.connect(_show_options)
 	$MainContainer/QuitButton.pressed.connect(get_tree().quit)
@@ -25,7 +26,13 @@ func _show_main() -> void:
 	main_container.visible = true
 	options_container.visible = false
 
-func _set_volume(db: float) -> void:
+func _set_volume(value: float) -> void:
+	# Convert 0-100 to dB (0 = -40dB, 100 = 0dB) with curve for smoother feel
+	var db: float
+	if value <= 0:
+		db = -80.0  # Essentially mute
+	else:
+		db = linear_to_db(value / 100.0)
 	AudioServer.set_bus_volume_db(0, db)
 
 func _toggle_fullscreen() -> void:

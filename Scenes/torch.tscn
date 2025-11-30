@@ -1,0 +1,56 @@
+[gd_scene load_steps=6 format=3]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_handle"]
+top_radius = 0.03
+bottom_radius = 0.05
+height = 0.6
+
+[sub_resource type="StandardMaterial3D" id="Material_handle"]
+albedo_color = Color(0.3, 0.2, 0.1, 1)
+
+[sub_resource type="StandardMaterial3D" id="Material_particle"]
+transparency = 1
+shading_mode = 0
+vertex_color_use_as_albedo = true
+albedo_color = Color(1, 0.7, 0.3, 1)
+emission_enabled = true
+emission = Color(1, 0.5, 0.1, 1)
+emission_energy_multiplier = 3.0
+billboard_mode = 1
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_fire"]
+emission_shape = 1
+emission_sphere_radius = 0.03
+direction = Vector3(0, 1, 0)
+spread = 15.0
+initial_velocity_min = 0.3
+initial_velocity_max = 0.6
+gravity = Vector3(0, 0.5, 0)
+scale_min = 0.5
+scale_max = 1.2
+color = Color(1, 0.6, 0.2, 1)
+color_ramp = null
+
+[sub_resource type="QuadMesh" id="QuadMesh_particle"]
+size = Vector2(0.08, 0.08)
+
+[node name="Torch" type="Node3D"]
+
+[node name="Handle" type="MeshInstance3D" parent="."]
+mesh = SubResource("CylinderMesh_handle")
+surface_material_override/0 = SubResource("Material_handle")
+
+[node name="FireParticles" type="GPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.32, 0)
+amount = 20
+lifetime = 0.6
+process_material = SubResource("ParticleProcessMaterial_fire")
+draw_pass_1 = SubResource("QuadMesh_particle")
+material_override = SubResource("Material_particle")
+
+[node name="TorchLight" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
+light_color = Color(1, 0.85, 0.6, 1)
+light_energy = 1.5
+omni_range = 8.0
+omni_attenuation = 1.2

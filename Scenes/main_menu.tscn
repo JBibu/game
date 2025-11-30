@@ -105,8 +105,9 @@ text = "Volumen"
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 focus_mode = 0
-min_value = -40.0
-value = -6.0
+min_value = 0.0
+max_value = 100.0
+value = 80.0
 
 [node name="FullscreenButton" type="Button" parent="OptionsContainer"]
 layout_mode = 2
