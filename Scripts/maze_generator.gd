@@ -26,25 +26,34 @@ func _ready() -> void:
 
 func _setup_materials() -> void:
 	_wall_mat = StandardMaterial3D.new()
-	_wall_mat.albedo_color = Color(0.3, 0.25, 0.2)
+	_wall_mat.albedo_color = Color(0.8, 0.8, 0.8)
 	_wall_mat.roughness = 1.0
-	if ResourceLoader.exists("res://Assets/Models/environment/Rocks_W.jpg"):
-		_wall_mat.albedo_texture = load("res://Assets/Models/environment/Rocks_W.jpg")
-		_wall_mat.uv1_scale = Vector3(4, 2, 4)
+	if ResourceLoader.exists("res://Assets/Models/environment/Castles_and_Forts_Walls.png"):
+		_wall_mat.albedo_texture = load("res://Assets/Models/environment/Castles_and_Forts_Walls.png")
+		_wall_mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+		_wall_mat.uv1_scale = Vector3(1, 1, 1)
+		_wall_mat.uv1_triplanar = true
+		_wall_mat.uv1_world_triplanar = true
 
 	_floor_mat = StandardMaterial3D.new()
-	_floor_mat.albedo_color = Color(0.2, 0.18, 0.15)
+	_floor_mat.albedo_color = Color(0.7, 0.7, 0.7)
 	_floor_mat.roughness = 1.0
-	if ResourceLoader.exists("res://Assets/Models/environment/SoilRough.jpg"):
-		_floor_mat.albedo_texture = load("res://Assets/Models/environment/SoilRough.jpg")
-		_floor_mat.uv1_scale = Vector3(6, 6, 1)
+	if ResourceLoader.exists("res://Assets/Models/environment/Walls.png"):
+		_floor_mat.albedo_texture = load("res://Assets/Models/environment/Walls.png")
+		_floor_mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+		_floor_mat.uv1_scale = Vector3(0.5, 0.5, 0.5)
+		_floor_mat.uv1_triplanar = true
+		_floor_mat.uv1_world_triplanar = true
 
 	_ceiling_mat = StandardMaterial3D.new()
-	_ceiling_mat.albedo_color = Color(0.15, 0.12, 0.1)
+	_ceiling_mat.albedo_color = Color(0.4, 0.4, 0.4)
 	_ceiling_mat.roughness = 1.0
-	if ResourceLoader.exists("res://Assets/Models/environment/Rocks_W.jpg"):
-		_ceiling_mat.albedo_texture = load("res://Assets/Models/environment/Rocks_W.jpg")
-		_ceiling_mat.uv1_scale = Vector3(3, 3, 3)
+	if ResourceLoader.exists("res://Assets/Models/environment/Castles_and_Forts_Walls.png"):
+		_ceiling_mat.albedo_texture = load("res://Assets/Models/environment/Castles_and_Forts_Walls.png")
+		_ceiling_mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+		_ceiling_mat.uv1_scale = Vector3(0.5, 0.5, 0.5)
+		_ceiling_mat.uv1_triplanar = true
+		_ceiling_mat.uv1_world_triplanar = true
 
 func _generate_maze() -> void:
 	# Grid is (2*width+1) x (2*height+1) to include walls between cells
