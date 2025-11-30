@@ -18,11 +18,12 @@ config/icon="res://icon.svg"
 [autoload]
 
 SceneTransition="*res://Scenes/scene_transition.tscn"
+Inventory="*res://Scripts/inventory.gd"
 
 [display]
 
-window/size/viewport_width=736
-window/size/viewport_height=414
+window/size/viewport_width=680
+window/size/viewport_height=383
 window/size/window_width_override=1280
 window/size/window_height_override=960
 window/stretch/mode="viewport"
@@ -53,3 +54,10 @@ move_right={
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0
+
+[shader_globals]
+
+precision_multiplier={
+"type": "float",
+"value": 1.0
+}

@@ -11,7 +11,7 @@
 radius = 0.42
 height = 1.68
 
-[node name="Enemy" type="CharacterBody3D"]
+[node name="Enemy" type="CharacterBody3D" groups=["enemy"]]
 script = ExtResource("1_script")
 skeleton_material = ExtResource("6_material")
 

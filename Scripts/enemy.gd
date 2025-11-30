@@ -11,8 +11,10 @@ enum State { PATROL, CHASE, ATTACK, RETURN }
 @export var damage: int = 10
 @export var patrol_points: Array[Vector3] = []
 @export var gravity: float = 9.8
+@export var health: int = 50
 
 var current_state: State = State.PATROL
+var is_dead: bool = false
 var current_patrol_index: int = 0
 var player: CharacterBody3D = null
 var start_position: Vector3
@@ -27,12 +29,19 @@ const BLEND_TIME := 0.15
 # Material
 @export var skeleton_material: Material
 
+# Health bar
+var max_health: int
+var health_bar: Sprite3D
+var health_bar_bg: Sprite3D
+
 func _ready() -> void:
 	start_position = global_position
+	max_health = health
 	if patrol_points.is_empty():
 		patrol_points = [start_position]
 	_apply_material()
 	_setup_animations()
+	_setup_health_bar()
 
 func _physics_process(delta: float) -> void:
 	# Gravity
@@ -139,7 +148,7 @@ func _check_attack_range() -> void:
 		current_anim = ""  # Reset so animation can play
 		_play_anim("attack")
 		# Delay damage to match animation
-		get_tree().create_timer(0.5).timeout.connect(_deal_damage)
+		get_tree().create_timer(1.0).timeout.connect(_deal_damage)
 
 func _attack(delta: float) -> void:
 	velocity.x = 0
@@ -239,3 +248,98 @@ func _play_anim(anim_name: String) -> void:
 	if current_anim != anim_name and anim_player.has_animation(full_name):
 		anim_player.play(full_name, BLEND_TIME)
 		current_anim = anim_name
+
+# Damage and death
+
+func take_damage(amount: int) -> void:
+	if is_dead:
+		return
+
+	health -= amount
+	_update_health_bar()
+
+	# Flash red when hit
+	if model:
+		_flash_damage()
+
+	if health <= 0:
+		_die()
+
+func _flash_damage() -> void:
+	var tween := create_tween()
+	_set_model_color(Color(1, 0.3, 0.3))
+	tween.tween_interval(0.1)
+	tween.tween_callback(func(): _set_model_color(Color.WHITE))
+
+func _set_model_color(color: Color) -> void:
+	if not model:
+		return
+	for child in model.get_children():
+		if child is MeshInstance3D:
+			var mesh_child := child as MeshInstance3D
+			var mat: Material = mesh_child.get_active_material(0)
+			if mat and mat is StandardMaterial3D:
+				var std_mat := mat as StandardMaterial3D
+				std_mat.albedo_color = color
+
+func _die() -> void:
+	is_dead = true
+	velocity = Vector3.ZERO
+
+	# Hide health bar
+	if health_bar:
+		health_bar.visible = false
+	if health_bar_bg:
+		health_bar_bg.visible = false
+
+	# Death animation - fall over and fade
+	var tween := create_tween()
+	tween.tween_property(self, "rotation:x", deg_to_rad(-90), 0.3)
+	tween.parallel().tween_property(self, "position:y", position.y - 0.5, 0.3)
+	tween.tween_interval(0.5)
+	tween.tween_callback(queue_free)
+
+# Health bar
+
+func _setup_health_bar() -> void:
+	var bar_height := 2.2
+
+	# Background (dark)
+	health_bar_bg = Sprite3D.new()
+	health_bar_bg.pixel_size = 0.01
+	health_bar_bg.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	health_bar_bg.no_depth_test = true
+	health_bar_bg.position = Vector3(0, bar_height, 0)
+
+	var bg_image := Image.create(52, 8, false, Image.FORMAT_RGBA8)
+	bg_image.fill(Color(0.2, 0.2, 0.2, 0.8))
+	var bg_texture := ImageTexture.create_from_image(bg_image)
+	health_bar_bg.texture = bg_texture
+	add_child(health_bar_bg)
+
+	# Foreground (health - red)
+	health_bar = Sprite3D.new()
+	health_bar.pixel_size = 0.01
+	health_bar.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	health_bar.no_depth_test = true
+	health_bar.position = Vector3(0, bar_height, 0)
+
+	var fg_image := Image.create(50, 6, false, Image.FORMAT_RGBA8)
+	fg_image.fill(Color(0.8, 0.1, 0.1, 1.0))
+	var fg_texture := ImageTexture.create_from_image(fg_image)
+	health_bar.texture = fg_texture
+	add_child(health_bar)
+
+func _update_health_bar() -> void:
+	if not health_bar:
+		return
+
+	var health_percent := float(health) / float(max_health)
+	health_percent = clamp(health_percent, 0.0, 1.0)
+
+	# Scale the bar width based on health
+	health_bar.scale.x = health_percent
+
+	# Offset to keep bar left-aligned
+	var bar_width := 0.5  # approximate width in world units
+	health_bar.position.x = -bar_width * (1.0 - health_percent) * 0.5

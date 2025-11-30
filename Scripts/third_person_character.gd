@@ -22,10 +22,18 @@ var invincible_time: float = 2.0
 var time_since_damage: float = 0.0
 var heal_timer: float = 0.0
 
+# Combat
+@export var attack_damage: int = 25
+@export var attack_range: float = 2.0
+@export var attack_cooldown: float = 0.8
+var can_attack: bool = true
+var is_attacking: bool = false
+
 # Node references
 @onready var camera_pivot: Node3D = $CameraPivot
 @onready var model: Node3D = $Model
 @onready var anim_player: AnimationPlayer = $AnimationPlayer
+@onready var attack_anim_player: AnimationPlayer = $AttackAnimPlayer
 @onready var glowstick_mesh: MeshInstance3D = $GlowstickMesh
 @onready var glowstick_light: OmniLight3D = $GlowstickLight
 
@@ -36,6 +44,10 @@ var is_emoting: bool = false
 var nearest_interactable: Interactable = null
 var skeleton: Skeleton3D = null
 var left_hand_bone_idx: int = -1
+var right_hand_bone_idx: int = -1
+
+# Sword
+var sword_mesh: Node3D = null
 
 const BLEND_TIME := 0.15
 
@@ -44,6 +56,8 @@ func _ready() -> void:
 	health = max_health
 	_setup_animations()
 	_setup_glowstick()
+	_setup_sword()
+	Inventory.sword_equipped_changed.connect(_on_sword_equipped_changed)
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
@@ -65,6 +79,11 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and event.keycode == KEY_E:
 		if nearest_interactable:
 			nearest_interactable.interact()
+
+	# Attack with left mouse button
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+			_attack()
 
 func _physics_process(delta: float) -> void:
 	camera_pivot.rotation_degrees.x = camera_rotation.x
@@ -104,21 +123,28 @@ func _physics_process(delta: float) -> void:
 
 	move_and_slide()
 	_update_glowstick()
+	_update_sword()
 	_update_healing(delta)
 
 # Animation setup
 
 func _setup_animations() -> void:
 	var library := AnimationLibrary.new()
-	var sources := {
+	var attack_library := AnimationLibrary.new()
+
+	var base_sources := {
 		"idle": $IdleAnim,
 		"walk": $WalkAnim,
 		"run": $RunAnim,
 		"gangnam": $GangnamAnim,
 	}
 
-	for anim_name in sources:
-		var source_node: Node = sources[anim_name]
+	# Bones to KEEP from attack animation (only upper body moves)
+	var attack_allowed_bones := ["spine", "chest", "neck", "head", "shoulder", "arm", "hand", "finger", "thumb"]
+
+	# Setup base animations (full body)
+	for anim_name in base_sources:
+		var source_node: Node = base_sources[anim_name]
 		var source_player := _find_anim_player(source_node)
 
 		if source_player and source_player.get_animation_list().size() > 0:
@@ -141,7 +167,40 @@ func _setup_animations() -> void:
 			anim.loop_mode = Animation.LOOP_LINEAR
 			library.add_animation(anim_name, anim)
 
+	# Setup attack animation (upper body only) in separate player
+	var attack_source := $AttackAnim
+	var attack_player := _find_anim_player(attack_source)
+	if attack_player and attack_player.get_animation_list().size() > 0:
+		var orig_anim_name = attack_player.get_animation_list()[0]
+		var anim: Animation = attack_player.get_animation(orig_anim_name).duplicate()
+
+		var tracks_to_remove := []
+		for i in range(anim.get_track_count()):
+			var track_path := str(anim.track_get_path(i))
+			if track_path == "rig":
+				tracks_to_remove.append(i)
+			elif track_path.begins_with("rig"):
+				var path_lower := track_path.to_lower()
+				var should_keep := false
+				for bone in attack_allowed_bones:
+					if bone in path_lower:
+						should_keep = true
+						break
+				if not should_keep:
+					tracks_to_remove.append(i)
+					continue
+				var new_path := "Model/" + track_path
+				anim.track_set_path(i, NodePath(new_path))
+
+		tracks_to_remove.reverse()
+		for i in tracks_to_remove:
+			anim.remove_track(i)
+
+		anim.loop_mode = Animation.LOOP_NONE
+		attack_library.add_animation("attack", anim)
+
 	anim_player.add_animation_library("anims", library)
+	attack_anim_player.add_animation_library("anims", attack_library)
 	_play_anim("idle")
 
 func _find_anim_player(node: Node) -> AnimationPlayer:
@@ -264,3 +323,73 @@ func _update_healing(delta: float) -> void:
 		if heal_timer >= heal_interval:
 			heal_timer = 0.0
 			health = min(health + heal_amount, max_health)
+
+# Sword system
+
+func _setup_sword() -> void:
+	if skeleton:
+		right_hand_bone_idx = skeleton.find_bone("hand_right")
+
+	var sword_scene := preload("res://Assets/Models/props/ps1_Sword.fbx")
+	sword_mesh = sword_scene.instantiate()
+	sword_mesh.visible = false
+	add_child(sword_mesh)
+
+func _update_sword() -> void:
+	if not skeleton or right_hand_bone_idx == -1 or not sword_mesh:
+		return
+
+	if not Inventory.is_sword_equipped():
+		sword_mesh.visible = false
+		return
+
+	sword_mesh.visible = true
+	var bone_pose := skeleton.get_bone_global_pose(right_hand_bone_idx)
+	var hand_global := skeleton.global_transform * bone_pose
+
+	var flipped_basis := hand_global.basis.rotated(hand_global.basis.z, deg_to_rad(180))
+	flipped_basis = flipped_basis.rotated(flipped_basis.x, deg_to_rad(-30))
+	sword_mesh.global_transform.basis = flipped_basis
+	sword_mesh.scale = Vector3(0.7, 0.7, 0.7)
+	# Move along sword's length so handle is in hand
+	sword_mesh.global_transform.origin = hand_global.origin + flipped_basis.y * -0.80
+
+func _on_sword_equipped_changed(equipped: bool) -> void:
+	if sword_mesh:
+		sword_mesh.visible = equipped
+
+func _attack() -> void:
+	if not can_attack or not Inventory.is_sword_equipped():
+		return
+
+	can_attack = false
+	is_attacking = true
+
+	# Play attack animation on separate player (upper body only)
+	attack_anim_player.play("anims/attack", BLEND_TIME)
+
+	# Deal damage slightly into the animation
+	get_tree().create_timer(0.7).timeout.connect(_deal_attack_damage)
+
+	# End attack when animation finishes
+	get_tree().create_timer(attack_cooldown).timeout.connect(func():
+		can_attack = true
+		is_attacking = false
+		current_anim = ""  # Reset to allow other anims
+	)
+
+func _deal_attack_damage() -> void:
+	var enemies := get_tree().get_nodes_in_group("enemy")
+	for enemy in enemies:
+		if not enemy is Node3D:
+			continue
+		var enemy_node := enemy as Node3D
+		var distance := global_position.distance_to(enemy_node.global_position)
+		if distance < attack_range:
+			# Check if enemy is roughly in front of the player
+			var to_enemy: Vector3 = (enemy_node.global_position - global_position).normalized()
+			var forward: Vector3 = model.global_transform.basis.z  # Model faces +Z
+			var dot := forward.dot(to_enemy)
+			if dot > 0.3:  # Enemy is in front (within ~70 degree cone)
+				if enemy_node.has_method("take_damage"):
+					enemy_node.take_damage(attack_damage)

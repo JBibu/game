@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://dpg4nsmr2le08"]
+[gd_scene load_steps=11 format=3 uid="uid://dpg4nsmr2le08"]
 
 [ext_resource type="Script" uid="uid://vj2ffxeofks4" path="res://Scripts/third_person_character.gd" id="1_script"]
 [ext_resource type="PackedScene" uid="uid://bxar3n2ikmp73" path="res://Assets/Models/player/male_casual.fbx" id="2_model"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://bf5htubjwmvad" path="res://Assets/Models/player/walking.fbx" id="4_walk"]
 [ext_resource type="PackedScene" uid="uid://bgticl4di67c6" path="res://Assets/Models/player/running.fbx" id="5_run"]
 [ext_resource type="PackedScene" uid="uid://yknu0pp1k6ue" path="res://Assets/Models/player/gangnam_style.fbx" id="6_gangnam"]
+[ext_resource type="PackedScene" path="res://Assets/Models/player/Sword And Shield Slash.fbx" id="7_attack"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_player"]
 radius = 0.3
@@ -42,6 +43,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.5)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 
+[node name="AttackAnimPlayer" type="AnimationPlayer" parent="."]
+
 [node name="IdleAnim" parent="." instance=ExtResource("3_idle")]
 visible = false
 
@@ -52,6 +55,9 @@ visible = false
 visible = false
 
 [node name="GangnamAnim" parent="." instance=ExtResource("6_gangnam")]
+visible = false
+
+[node name="AttackAnim" parent="." instance=ExtResource("7_attack")]
 visible = false
 
 [node name="InteractionArea" type="Area3D" parent="."]
