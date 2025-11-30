@@ -4,10 +4,18 @@ extends Node
 
 func _ready() -> void:
 	var slides: Array[Dictionary] = [
-		{"text": "En un mundo olvidado por el tiempo..."},
-		{"text": "Donde la oscuridad consume todo a su paso..."},
-		{"text": "Un viajero despierta sin recuerdos..."},
-		{"text": "Solo una linterna ilumina su camino..."},
+		{
+			"image": load("res://Assets/Intro/tasca_gente.png"),
+			"text": "Se está celebrando el aniversario 1200 de la ciudad de Murcia. Todos están festejando..."
+		},
+		{
+			"image": load("res://Assets/Intro/tasca_gente.png"),
+			"text": "Un chaval está festejando mucho... demasiado."
+		},
+		{
+			"image": load("res://Assets/Intro/tasca_vacia.png"),
+			"text": "...¿Dónde estoy?"
+		},
 	]
 
 	slideshow.setup(slides)

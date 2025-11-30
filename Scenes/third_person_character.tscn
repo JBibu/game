@@ -1,12 +1,12 @@
-[gd_scene load_steps=11 format=3 uid="uid://dpg4nsmr2le08"]
+[gd_scene load_steps=12 format=3 uid="uid://dpg4nsmr2le08"]
 
-[ext_resource type="Script" uid="uid://vj2ffxeofks4" path="res://Scripts/third_person_character.gd" id="1_script"]
-[ext_resource type="PackedScene" uid="uid://bxar3n2ikmp73" path="res://Assets/Models/player/male_casual.fbx" id="2_model"]
-[ext_resource type="PackedScene" uid="uid://b74lknwsq6kt5" path="res://Assets/Models/player/idle (2).fbx" id="3_idle"]
-[ext_resource type="PackedScene" uid="uid://bf5htubjwmvad" path="res://Assets/Models/player/walking.fbx" id="4_walk"]
-[ext_resource type="PackedScene" uid="uid://bgticl4di67c6" path="res://Assets/Models/player/running.fbx" id="5_run"]
-[ext_resource type="PackedScene" uid="uid://yknu0pp1k6ue" path="res://Assets/Models/player/gangnam_style.fbx" id="6_gangnam"]
-[ext_resource type="PackedScene" path="res://Assets/Models/player/Sword And Shield Slash.fbx" id="7_attack"]
+[ext_resource type="Script" uid="uid://dm4xhweu2b0bb" path="res://Scripts/third_person_character.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://bvjcvvuqimmvt" path="res://Assets/Models/player/male_casual.fbx" id="2_model"]
+[ext_resource type="PackedScene" uid="uid://d4hjyurqh36d8" path="res://Assets/Models/player/idle (2).fbx" id="3_idle"]
+[ext_resource type="PackedScene" uid="uid://b5bcd47yyw174" path="res://Assets/Models/player/walking.fbx" id="4_walk"]
+[ext_resource type="PackedScene" uid="uid://cepg2taeqm232" path="res://Assets/Models/player/running.fbx" id="5_run"]
+[ext_resource type="PackedScene" uid="uid://c6oqsrddupww2" path="res://Assets/Models/player/gangnam_style.fbx" id="6_gangnam"]
+[ext_resource type="PackedScene" uid="uid://bj2k5rls3h0y6" path="res://Assets/Models/player/Sword And Shield Slash.fbx" id="7_attack"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_player"]
 radius = 0.3
@@ -22,7 +22,7 @@ height = 0.25
 
 [sub_resource type="StandardMaterial3D" id="Material_glowstick"]
 emission_enabled = true
-emission = Color(1.0, 0.2, 0.05, 1)
+emission = Color(1, 0.2, 0.05, 1)
 emission_energy_multiplier = 3.0
 
 [node name="ThirdPersonCharacter" type="CharacterBody3D" groups=["player"]]
@@ -40,6 +40,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
 
 [node name="Camera3D" type="Camera3D" parent="CameraPivot"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.5)
+far = 15.0
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 
@@ -75,7 +76,7 @@ surface_material_override/0 = SubResource("Material_glowstick")
 
 [node name="GlowstickLight" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, 1, 0.3)
-light_color = Color(1.0, 0.2, 0.05, 1)
+light_color = Color(1, 0.2, 0.05, 1)
 light_energy = 2.0
 omni_range = 12.0
 omni_attenuation = 1.5

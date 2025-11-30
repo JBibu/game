@@ -44,6 +44,15 @@ func unequip_sword() -> void:
 func is_sword_equipped() -> bool:
 	return sword_equipped and has_item("sword")
 
+func add_key() -> void:
+	add_item("key")
+
+func has_key() -> bool:
+	return has_item("key")
+
+func use_key() -> bool:
+	return remove_item("key")
+
 func clear() -> void:
 	items.clear()
 	sword_equipped = false

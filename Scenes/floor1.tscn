@@ -1,7 +1,7 @@
-[gd_scene load_steps=24 format=3 uid="uid://drcxgmetbefvy"]
+[gd_scene load_steps=29 format=3 uid="uid://drcxgmetbefvy"]
 
 [ext_resource type="PackedScene" uid="uid://dpg4nsmr2le08" path="res://Scenes/third_person_character.tscn" id="1_player"]
-[ext_resource type="PackedScene" uid="uid://b0egein5r48yx" path="res://Assets/Models/environment/floor1.glb" id="2_map"]
+[ext_resource type="PackedScene" uid="uid://bff446houwyok" path="res://Assets/Models/environment/floor1.glb" id="2_map"]
 [ext_resource type="PackedScene" path="res://Scenes/dialog_box.tscn" id="3_dialog"]
 [ext_resource type="PackedScene" path="res://Scenes/interaction_prompt.tscn" id="4_prompt"]
 [ext_resource type="PackedScene" path="res://Scenes/health_ui.tscn" id="5_health"]
@@ -13,14 +13,17 @@
 [ext_resource type="PackedScene" uid="uid://bv5aghfa2anl2" path="res://Assets/Models/environment/Mines.fbx" id="13_6uo7t"]
 [ext_resource type="PackedScene" uid="uid://bvpmehar5fhc7" path="res://Scenes/sword_pickup.tscn" id="13_sword_pickup"]
 [ext_resource type="Script" uid="uid://cnndn32vsmpyx" path="res://Scripts/floor1.gd" id="14_floor1"]
-[ext_resource type="ArrayMesh" uid="uid://sn27b3sqw6j4" path="res://glock5.res" id="14_hvb01"]
-[ext_resource type="ArrayMesh" uid="uid://dbk3v0dm2o0cp" path="res://arc23.res" id="15_waf1v"]
-[ext_resource type="ArrayMesh" uid="uid://dj0rcocas6mko" path="res://arc.res" id="16_bn4kt"]
-[ext_resource type="ArrayMesh" uid="uid://cbfa6yeirs0kj" path="res://fence.res" id="17_n5x6n"]
-[ext_resource type="ArrayMesh" uid="uid://1gw2sffvot5d" path="res://fence door.res" id="18_hvf1m"]
-[ext_resource type="ArrayMesh" uid="uid://clnrnci1hkltu" path="res://gloc3.res" id="19_hvb01"]
-[ext_resource type="ArrayMesh" uid="uid://dxugw2gijjpmf" path="res://lock.res" id="20_bn4kt"]
-[ext_resource type="ArrayMesh" uid="uid://whrt6ceqhfnw" path="res://r2.res" id="21_n5x6n"]
+[ext_resource type="ArrayMesh" uid="uid://sn27b3sqw6j4" path="res://Assets/Models/meshes/glock5.res" id="14_hvb01"]
+[ext_resource type="ArrayMesh" uid="uid://dbk3v0dm2o0cp" path="res://Assets/Models/meshes/arc23.res" id="15_waf1v"]
+[ext_resource type="ArrayMesh" uid="uid://dj0rcocas6mko" path="res://Assets/Models/meshes/arc.res" id="16_bn4kt"]
+[ext_resource type="ArrayMesh" uid="uid://cbfa6yeirs0kj" path="res://Assets/Models/meshes/fence.res" id="17_n5x6n"]
+[ext_resource type="ArrayMesh" uid="uid://1gw2sffvot5d" path="res://Assets/Models/meshes/fence door.res" id="18_hvf1m"]
+[ext_resource type="ArrayMesh" uid="uid://clnrnci1hkltu" path="res://Assets/Models/meshes/gloc3.res" id="19_hvb01"]
+[ext_resource type="ArrayMesh" uid="uid://dxugw2gijjpmf" path="res://Assets/Models/meshes/lock.res" id="20_bn4kt"]
+[ext_resource type="ArrayMesh" uid="uid://whrt6ceqhfnw" path="res://Assets/Models/meshes/r2.res" id="21_n5x6n"]
+[ext_resource type="Script" uid="uid://58c4qk4fy0o3" path="res://Scripts/dialog_trigger.gd" id="22_dialog_trigger"]
+[ext_resource type="PackedScene" path="res://Scenes/chest.tscn" id="23_chest"]
+[ext_resource type="Script" uid="uid://bxep6erfud6jw" path="res://Scripts/door_trigger.gd" id="24_door_trigger"]
 
 [sub_resource type="Environment" id="Environment_dark"]
 background_mode = 1
@@ -28,6 +31,12 @@ ambient_light_source = 2
 ambient_light_energy = 0.0
 
 [sub_resource type="CameraAttributesPractical" id="CameraAttributes_dark"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_monster_trigger"]
+size = Vector3(8, 4, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_door_trigger"]
+size = Vector3(3, 3, 3)
 
 [node name="Floor1" type="Node3D"]
 script = ExtResource("14_floor1")
@@ -37,7 +46,7 @@ environment = SubResource("Environment_dark")
 camera_attributes = SubResource("CameraAttributes_dark")
 
 [node name="ThirdPersonCharacter" parent="." instance=ExtResource("1_player")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+transform = Transform3D(0.39876506, 0, 0.9170531, 0, 1, 0, -0.9170531, 0, 0.39876506, 0, 1, 3.0760388)
 
 [node name="Map" parent="." instance=ExtResource("2_map")]
 transform = Transform3D(34.495, 0, 0, 0, 34.495, 0, 0, 0, 34.495, -19.452, 9.797, -20.893)
@@ -57,10 +66,13 @@ autoplay = true
 transform = Transform3D(0.08073206, 0, 0.39176822, 0, 0.4, 0, -0.39176822, 0, 0.08073206, -42.609726, 0.29888296, -38.490284)
 
 [node name="Enemy" parent="." instance=ExtResource("9_juqag")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.1643386, 1.675991, -22.81014)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.1643386, 1.675991, -25.690367)
 
 [node name="Enemy2" parent="." instance=ExtResource("9_juqag")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.44341, 2.3043222, -27.423143)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.44341, 2.3043222, -29.904408)
+
+[node name="Enemy3" parent="." instance=ExtResource("9_juqag")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -45.958447, 1.5452857, -36.84899)
 
 [node name="SwordPickup" parent="." instance=ExtResource("13_sword_pickup")]
 transform = Transform3D(0.2690375, -0.8133234, -0.515872, 0, 0.5356205, -0.8444588, 0.9631297, 0.22719108, 0.14410199, -12.630741, 1.1646444, 5.4045)
@@ -76,8 +88,36 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.18888, -942.91547, -6.2512
 transform = Transform3D(309.05, 0, 0, 0, 307.76382, -28.165777, 0, 28.165777, 307.76382, -4.929811, 4.63317, 1.0924604)
 mesh = ExtResource("14_hvb01")
 
+[node name="Glock6" type="MeshInstance3D" parent="."]
+transform = Transform3D(-6.0361075, -308.5483, -16.534195, 41.02013, -17.191162, 305.83276, -306.25613, 3.7786946, 41.289314, -39.6541, 6.431183, -9.167223)
+mesh = ExtResource("14_hvb01")
+
+[node name="Glock9" type="MeshInstance3D" parent="."]
+transform = Transform3D(87.86723, -218.6563, -12.65125, 34.066162, 0.17837158, 233.5182, -216.35649, -88.77315, 31.63038, -32.493958, 5.1849327, -19.796402)
+mesh = ExtResource("14_hvb01")
+
+[node name="Glock10" type="MeshInstance3D" parent="."]
+transform = Transform3D(87.86723, -218.6563, -12.65125, 34.066162, 0.17837158, 233.5182, -216.35649, -88.77315, 31.63038, -28.269531, 4.8188267, -32.773327)
+mesh = ExtResource("14_hvb01")
+
+[node name="Glock7" type="MeshInstance3D" parent="."]
+transform = Transform3D(-6.0361075, -308.5483, -16.534195, 41.02013, -17.191162, 305.83276, -306.25613, 3.7786946, 41.289314, -3.8545485, 6.322072, -32.629898)
+mesh = ExtResource("14_hvb01")
+
+[node name="Glock11" type="MeshInstance3D" parent="."]
+transform = Transform3D(-6.0361066, -308.54828, -16.534193, -18.159187, -16.154547, 308.09274, -308.45694, 6.988932, -17.814163, -14.258919, 6.3994694, -33.550636)
+mesh = ExtResource("14_hvb01")
+
+[node name="Glock8" type="MeshInstance3D" parent="."]
+transform = Transform3D(-6.0361066, -308.54828, -16.534193, -75.600006, -14.560018, 299.30673, -299.59988, 9.890421, -75.19289, -3.8545485, 6.322072, -22.507296)
+mesh = ExtResource("14_hvb01")
+
 [node name="Arc23" type="MeshInstance3D" parent="."]
 transform = Transform3D(-23.536787, -123.472855, 10.572331, 4.2687415e-07, 10.761323, 125.68011, -123.92462, 23.45098, -2.0079832, -19.319347, 0, 1.6674056)
+mesh = ExtResource("15_waf1v")
+
+[node name="Arc24" type="MeshInstance3D" parent="."]
+transform = Transform3D(-115.1799, -51.24093, 4.387493, 6.577018e-07, 10.761323, 125.68011, -51.428413, 114.760025, -9.826298, -22.170233, -0.86502886, -42.7745)
 mesh = ExtResource("15_waf1v")
 
 [node name="Arc" type="MeshInstance3D" parent="."]
@@ -108,6 +148,14 @@ mesh = ExtResource("19_hvb01")
 transform = Transform3D(180.805, 0, 0, 0, 0.66267866, 180.80377, 0, -180.80377, 0.66267866, -43.20262, 1.2589804, -0.14161801)
 mesh = ExtResource("19_hvb01")
 
+[node name="Gloc9" type="MeshInstance3D" parent="."]
+transform = Transform3D(180.805, 0, 0, 0, 0.66267866, 180.80377, 0, -180.80377, 0.66267866, -6.537469, 1.6396837, -23.4877)
+mesh = ExtResource("19_hvb01")
+
+[node name="Gloc10" type="MeshInstance3D" parent="."]
+transform = Transform3D(180.805, 0, 0, 0, 0.66267866, 180.80377, 0, -180.80377, 0.66267866, -2.1025581, 1.3449087, -23.48967)
+mesh = ExtResource("19_hvb01")
+
 [node name="Gloc5" type="MeshInstance3D" parent="."]
 transform = Transform3D(150.215, 0, 0, 0, 0.55056155, 150.21399, 0, -150.21399, 0.55056155, -45.538113, 1.2589804, -1.2425247)
 mesh = ExtResource("19_hvb01")
@@ -128,10 +176,77 @@ mesh = ExtResource("19_hvb01")
 transform = Transform3D(833.73, 0, 0, 0, 15.205341, 833.5913, 0, -833.5913, 15.205341, -13.711067, 1.2780545, 5.3752337)
 mesh = ExtResource("20_bn4kt")
 
+[node name="Lock2" type="MeshInstance3D" parent="."]
+transform = Transform3D(833.73, 0, 0, 0, 15.205341, 833.5913, 0, -833.5913, 15.205341, -15.739491, 0.9243119, -28.83469)
+mesh = ExtResource("20_bn4kt")
+
+[node name="Lock3" type="MeshInstance3D" parent="."]
+transform = Transform3D(833.73, 0, 0, 0, 15.205341, 833.5913, 0, -833.5913, 15.205341, -15.739491, 1.0059025, -51.338326)
+mesh = ExtResource("20_bn4kt")
+
+[node name="Lock4" type="MeshInstance3D" parent="."]
+transform = Transform3D(833.73, 0, 0, 0, 15.205341, 833.5913, 0, -833.5913, 15.205341, -39.43081, 1.0059025, -42.366566)
+mesh = ExtResource("20_bn4kt")
+
 [node name="R2" type="MeshInstance3D" parent="."]
 transform = Transform3D(197.62, 0, 0, 0, 197.62, 0, 0, 0, 197.62, -38.034725, 0.8890939, -4.7381344)
+mesh = ExtResource("21_n5x6n")
+
+[node name="R4" type="MeshInstance3D" parent="."]
+transform = Transform3D(197.62, 0, 0, 0, 197.62, 0, 0, 0, 197.62, -24.99987, 0.8890939, -18.153744)
+mesh = ExtResource("21_n5x6n")
+
+[node name="R7" type="MeshInstance3D" parent="."]
+transform = Transform3D(197.62, 0, 0, 0, 197.62, 0, 0, 0, 197.62, -6.304819, 1.5561557, -35.67213)
+mesh = ExtResource("21_n5x6n")
+
+[node name="R5" type="MeshInstance3D" parent="."]
+transform = Transform3D(-184.89389, 200.64633, 209.68028, 276.8389, 190.37047, -3.8976536e-06, -119.91098, 130.12708, -323.31152, -22.402336, 0.8890939, -18.400166)
+mesh = ExtResource("21_n5x6n")
+
+[node name="R6" type="MeshInstance3D" parent="."]
+transform = Transform3D(178.32268, -181.0453, 320.93066, 404.69534, 260.359, -7.795308e-06, -268.29562, 272.3919, 213.30655, -4.052824, 0.8890939, -37.45413)
+mesh = ExtResource("21_n5x6n")
+
+[node name="R8" type="MeshInstance3D" parent="."]
+transform = Transform3D(178.32268, -181.0453, 320.93066, 404.69534, 260.359, -7.795308e-06, -268.29562, 272.3919, 213.30655, -8.688848, 0.8890939, -49.077194)
 mesh = ExtResource("21_n5x6n")
 
 [node name="R3" type="MeshInstance3D" parent="."]
 transform = Transform3D(39.277397, 0, 193.67743, 0, 197.61998, 0, -193.67743, 0, 39.277397, -35.82163, 0.8890939, -2.902974)
 mesh = ExtResource("21_n5x6n")
+
+[node name="MonsterTrigger" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -26.408577, 2, -21.881502)
+script = ExtResource("22_dialog_trigger")
+dialog_texts = Array[Dictionary]([{
+"emotion": "surprised",
+"text": "Espera... Que es ese ruido?"
+}, {
+"emotion": "fear",
+"text": "Suena como... gruñidos. No me gusta nada esto."
+}, {
+"emotion": "intrigued",
+"text": "Sera mejor que tenga cuidado. Necesito encontrar algo con lo que defenderme."
+}])
+character_name = "Javi"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MonsterTrigger"]
+shape = SubResource("BoxShape3D_monster_trigger")
+
+[node name="KeyChest" parent="." instance=ExtResource("23_chest")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 1, -10)
+dialog_text = "Has encontrado una llave! Quiza pueda abrir alguna puerta..."
+
+[node name="Chest" parent="." instance=ExtResource("23_chest")]
+transform = Transform3D(1.0340267, 0, -0.73225445, 0, 1, 0, 0.88802266, 0, 0.85264784, -0.2526493, 0.77886033, -44.270283)
+
+[node name="DoorTrigger" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -32, 2, -34)
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("24_door_trigger")
+door_node_path = NodePath("../FenceDoor")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DoorTrigger"]
+shape = SubResource("BoxShape3D_door_trigger")

@@ -12,6 +12,7 @@ enum State { PATROL, CHASE, ATTACK, RETURN }
 @export var patrol_points: Array[Vector3] = []
 @export var gravity: float = 9.8
 @export var health: int = 50
+@export var health_bar_visible_range: float = 10.0
 
 var current_state: State = State.PATROL
 var is_dead: bool = false
@@ -24,13 +25,17 @@ var is_attacking: bool = false
 @onready var model: Node3D = $Model
 @onready var anim_player: AnimationPlayer = $AnimationPlayer
 var current_anim: String = ""
-const BLEND_TIME := 0.15
-
 
 # Health bar
 var max_health: int
 var health_bar: Sprite3D
 var health_bar_bg: Sprite3D
+
+# Sound
+var sfx_hit: AudioStreamPlayer3D
+var sfx_attack: AudioStreamPlayer3D
+var sfx_detect: AudioStreamPlayer3D
+var sfx_death: AudioStreamPlayer3D
 
 func _ready() -> void:
 	start_position = global_position
@@ -39,6 +44,14 @@ func _ready() -> void:
 		patrol_points = [start_position]
 	_setup_animations()
 	_setup_health_bar()
+	_apply_skeleton_texture()
+	_setup_sounds()
+
+func _setup_sounds() -> void:
+	sfx_hit = Utils.create_audio_player(self, "res://Assets/Sounds/SFX/enemy_hit.wav", -10.0, true)
+	sfx_attack = Utils.create_audio_player(self, "res://Assets/Sounds/SFX/enemy_attack.wav", -10.0, true)
+	sfx_detect = Utils.create_audio_player(self, "res://Assets/Sounds/SFX/enemy_detect.wav", -10.0, true)
+	sfx_death = Utils.create_audio_player(self, "res://Assets/Sounds/SFX/enemy_death.wav", 0.0, true)
 
 func _physics_process(delta: float) -> void:
 	# Gravity
@@ -54,9 +67,9 @@ func _physics_process(delta: float) -> void:
 	# State machine
 	match current_state:
 		State.PATROL:
-			_patrol(delta)
+			var is_moving := _patrol(delta)
 			_check_player_detection()
-			_play_anim("walk")
+			_play_anim("walk" if is_moving else "idle")
 		State.CHASE:
 			_chase(delta)
 			_check_player_lost()
@@ -69,10 +82,13 @@ func _physics_process(delta: float) -> void:
 			_play_anim("walk")
 
 	move_and_slide()
+	_update_health_bar_visibility()
 
-func _patrol(delta: float) -> void:
+func _patrol(delta: float) -> bool:
 	if patrol_points.is_empty():
-		return
+		velocity.x = 0
+		velocity.z = 0
+		return false
 
 	var target := patrol_points[current_patrol_index]
 	var direction := (target - global_position)
@@ -80,11 +96,18 @@ func _patrol(delta: float) -> void:
 
 	if direction.length() < 0.5:
 		current_patrol_index = (current_patrol_index + 1) % patrol_points.size()
+		# If only one patrol point, stay idle
+		if patrol_points.size() == 1:
+			velocity.x = 0
+			velocity.z = 0
+			return false
+		return true
 	else:
 		direction = direction.normalized()
 		velocity.x = direction.x * move_speed
 		velocity.z = direction.z * move_speed
 		_face_direction(direction, delta)
+		return true
 
 func _chase(delta: float) -> void:
 	if not player:
@@ -118,6 +141,8 @@ func _check_player_detection() -> void:
 
 	var distance := global_position.distance_to(player.global_position)
 	if distance < detection_range:
+		if current_state != State.CHASE and sfx_detect:
+			sfx_detect.play()
 		current_state = State.CHASE
 
 func _check_player_lost() -> void:
@@ -144,6 +169,8 @@ func _check_attack_range() -> void:
 		is_attacking = true
 		current_anim = ""  # Reset so animation can play
 		_play_anim("attack")
+		if sfx_attack:
+			sfx_attack.play()
 		# Delay damage to match animation
 		get_tree().create_timer(1.0).timeout.connect(_deal_damage)
 
@@ -182,7 +209,7 @@ func _setup_animations() -> void:
 
 	for anim_name in sources:
 		var source_node: Node = sources[anim_name]
-		var source_player := _find_anim_player(source_node)
+		var source_player := Utils.find_anim_player(source_node)
 
 		if source_player and source_player.get_animation_list().size() > 0:
 			var orig_anim_name = source_player.get_animation_list()[0]
@@ -214,21 +241,12 @@ func _setup_animations() -> void:
 	anim_player.add_animation_library("anims", library)
 	_play_anim("idle")
 
-func _find_anim_player(node: Node) -> AnimationPlayer:
-	if node is AnimationPlayer:
-		return node
-	for child in node.get_children():
-		var result = _find_anim_player(child)
-		if result:
-			return result
-	return null
-
 func _play_anim(anim_name: String) -> void:
 	if is_attacking and anim_name != "attack":
 		return
 	var full_name := "anims/" + anim_name
 	if current_anim != anim_name and anim_player.has_animation(full_name):
-		anim_player.play(full_name, BLEND_TIME)
+		anim_player.play(full_name, Utils.BLEND_TIME)
 		current_anim = anim_name
 
 # Damage and death
@@ -244,8 +262,52 @@ func take_damage(amount: int) -> void:
 	if model:
 		_flash_damage()
 
+	# Spawn hit particles
+	_spawn_hit_particles()
+
+	# Play hit sound
+	if sfx_hit:
+		sfx_hit.pitch_scale = randf_range(0.9, 1.1)
+		sfx_hit.play()
+
 	if health <= 0:
 		_die()
+
+func _spawn_hit_particles() -> void:
+	var particles := GPUParticles3D.new()
+	particles.emitting = true
+	particles.one_shot = true
+	particles.explosiveness = 1.0
+	particles.amount = 12
+	particles.lifetime = 0.4
+	particles.position = Vector3(0, 1.0, 0) + global_position
+	particles.top_level = true
+
+	var material := ParticleProcessMaterial.new()
+	material.direction = Vector3(0, 1, 0)
+	material.spread = 60.0
+	material.initial_velocity_min = 3.0
+	material.initial_velocity_max = 5.0
+	material.gravity = Vector3(0, -10, 0)
+	material.scale_min = 0.05
+	material.scale_max = 0.1
+	material.color = Color(0.8, 0.1, 0.1)
+	particles.process_material = material
+
+	# Simple mesh for particles
+	var mesh := SphereMesh.new()
+	mesh.radius = 0.5
+	mesh.height = 1.0
+	particles.draw_pass_1 = mesh
+
+	# Add to scene root so it persists after enemy dies
+	get_tree().current_scene.add_child(particles)
+
+	# Clean up after particles finish
+	get_tree().create_timer(1.0).timeout.connect(func():
+		if is_instance_valid(particles):
+			particles.queue_free()
+	)
 
 func _flash_damage() -> void:
 	var tween := create_tween()
@@ -268,6 +330,10 @@ func _die() -> void:
 	is_dead = true
 	velocity = Vector3.ZERO
 
+	# Play death sound
+	if sfx_death:
+		sfx_death.play()
+
 	# Hide health bar
 	if health_bar:
 		health_bar.visible = false
@@ -282,6 +348,28 @@ func _die() -> void:
 	tween.tween_callback(queue_free)
 
 # Health bar
+
+func _apply_skeleton_texture() -> void:
+	var texture := load("res://Assets/Models/skeleton/skeleton_d.png") as Texture2D
+	if not texture:
+		return
+	_apply_texture_to_node(model, texture)
+
+func _apply_texture_to_node(node: Node, texture: Texture2D) -> void:
+	if node is MeshInstance3D:
+		var mesh_instance := node as MeshInstance3D
+		for i in range(mesh_instance.get_surface_override_material_count()):
+			var mat := StandardMaterial3D.new()
+			mat.albedo_texture = texture
+			mesh_instance.set_surface_override_material(i, mat)
+		# Also check mesh materials if no override count
+		if mesh_instance.get_surface_override_material_count() == 0 and mesh_instance.mesh:
+			for i in range(mesh_instance.mesh.get_surface_count()):
+				var mat := StandardMaterial3D.new()
+				mat.albedo_texture = texture
+				mesh_instance.set_surface_override_material(i, mat)
+	for child in node.get_children():
+		_apply_texture_to_node(child, texture)
 
 func _setup_health_bar() -> void:
 	var bar_height := 2.2
@@ -312,6 +400,10 @@ func _setup_health_bar() -> void:
 	health_bar.texture = fg_texture
 	add_child(health_bar)
 
+	# Start hidden
+	health_bar.visible = false
+	health_bar_bg.visible = false
+
 func _update_health_bar() -> void:
 	if not health_bar:
 		return
@@ -325,3 +417,15 @@ func _update_health_bar() -> void:
 	# Offset to keep bar left-aligned
 	var bar_width := 0.5  # approximate width in world units
 	health_bar.position.x = -bar_width * (1.0 - health_percent) * 0.5
+
+func _update_health_bar_visibility() -> void:
+	if not health_bar or not health_bar_bg or is_dead:
+		return
+
+	var should_show := false
+	if player:
+		var distance := global_position.distance_to(player.global_position)
+		should_show = distance < health_bar_visible_range
+
+	health_bar.visible = should_show
+	health_bar_bg.visible = should_show
