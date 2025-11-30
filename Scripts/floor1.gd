@@ -44,4 +44,4 @@ func _start_intro_dialog() -> void:
 		},
 	]
 
-	dialog_box.start_dialog(dialogs, "Javi")
+	dialog_box.start_dialog(dialogs, "Adán")

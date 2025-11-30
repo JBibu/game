@@ -1,11 +1,11 @@
 [gd_scene load_steps=30 format=3 uid="uid://drcxgmetbefvy"]
 
 [ext_resource type="PackedScene" uid="uid://dpg4nsmr2le08" path="res://Scenes/third_person_character.tscn" id="1_player"]
-[ext_resource type="PackedScene" path="res://Assets/Blender/floor1.blend" id="2_map"]
+[ext_resource type="PackedScene" uid="uid://c178k2e5sh35a" path="res://Assets/Blender/floor1.blend" id="2_map"]
 [ext_resource type="PackedScene" path="res://Scenes/dialog_box.tscn" id="3_dialog"]
 [ext_resource type="PackedScene" path="res://Scenes/interaction_prompt.tscn" id="4_prompt"]
 [ext_resource type="PackedScene" path="res://Scenes/health_ui.tscn" id="5_health"]
-[ext_resource type="AudioStream" uid="uid://bbur7ls3kolmo" path="res://Assets/Sounds/Music/01-cave.mp3" id="6_music"]
+[ext_resource type="AudioStream" uid="uid://7uhlp3vanoxw" path="res://Assets/Sounds/Music/01-cave.mp3" id="6_music"]
 [ext_resource type="Script" uid="uid://dn6u7redt6x3y" path="res://Scripts/map_collision_generator.gd" id="7_collision"]
 [ext_resource type="PackedScene" uid="uid://b1jbh6hbnuuob" path="res://Assets/Models/environment/stair1.glb" id="8_wxwll"]
 [ext_resource type="PackedScene" path="res://Scenes/enemy.tscn" id="9_juqag"]
@@ -232,7 +232,7 @@ dialog_texts = Array[Dictionary]([{
 "emotion": "intrigued",
 "text": "Sera mejor que tenga cuidado. Necesito encontrar algo con lo que defenderme."
 }])
-character_name = "Javi"
+character_name = "Adán"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MonsterTrigger"]
 shape = SubResource("BoxShape3D_monster_trigger")
@@ -255,4 +255,10 @@ door_node_path = NodePath("../FenceDoor")
 shape = SubResource("BoxShape3D_door_trigger")
 
 [node name="WallDecor" parent="." instance=ExtResource("25_2p860")]
-transform = Transform3D(-3.4540884, 0, 0.01979639, 0, 0.3356203, 0, -0.82568383, 0, -0.08281438, -12.076141, 1.7937001, -17.50907)
+transform = Transform3D(-3.37082, 0, 0.02680625, 0, 0.3356203, 0, -1.1180568, 0, -0.08081797, -12.076141, 1.7937001, -17.740276)
+
+[node name="WallDecor3" parent="." instance=ExtResource("25_2p860")]
+transform = Transform3D(-3.510217, -0.016945874, 0.012194683, 0.03326221, 0.30912057, 0.033152126, -0.5382822, 0.12960806, -0.07747478, -18.716227, 1.7937001, -44.171436)
+
+[node name="WallDecor2" parent="." instance=ExtResource("25_2p860")]
+transform = Transform3D(1.0129793, -0.00085348904, 0.081610136, -0.17744145, 0.33514956, 0.0014916661, -3.399245, -0.017749235, 0.024242051, -42.751495, 1.6979103, -16.856142)

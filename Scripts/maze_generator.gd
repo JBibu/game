@@ -2,7 +2,7 @@ extends Node3D
 class_name MazeGenerator
 
 @export var cell_size: float = 6.0
-@export var wall_height: float = 8.0
+@export var wall_height: float = 6.0
 @export var maze_width: int = 8
 @export var maze_height: int = 8
 
@@ -15,6 +15,7 @@ var _floor_mat: StandardMaterial3D
 var _ceiling_mat: StandardMaterial3D
 
 @export var num_enemies: int = 4
+@export var num_brutes: int = 2
 
 func _ready() -> void:
 	randomize()
@@ -26,32 +27,29 @@ func _ready() -> void:
 
 func _setup_materials() -> void:
 	_wall_mat = StandardMaterial3D.new()
-	_wall_mat.albedo_color = Color(0.8, 0.8, 0.8)
+	_wall_mat.albedo_color = Color(1.0, 1.0, 1.0)
 	_wall_mat.roughness = 1.0
-	if ResourceLoader.exists("res://Assets/Models/environment/Castles_and_Forts_Walls.png"):
-		_wall_mat.albedo_texture = load("res://Assets/Models/environment/Castles_and_Forts_Walls.png")
+	if ResourceLoader.exists("res://Assets/Textures/gothic_big.png"):
+		_wall_mat.albedo_texture = load("res://Assets/Textures/gothic_big.png")
 		_wall_mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-		_wall_mat.uv1_scale = Vector3(1, 1, 1)
-		_wall_mat.uv1_triplanar = true
-		_wall_mat.uv1_world_triplanar = true
 
 	_floor_mat = StandardMaterial3D.new()
-	_floor_mat.albedo_color = Color(0.7, 0.7, 0.7)
+	_floor_mat.albedo_color = Color(1.0, 1.0, 1.0)
 	_floor_mat.roughness = 1.0
-	if ResourceLoader.exists("res://Assets/Models/environment/Walls.png"):
-		_floor_mat.albedo_texture = load("res://Assets/Models/environment/Walls.png")
+	if ResourceLoader.exists("res://Assets/Textures/gothic_floor.png"):
+		_floor_mat.albedo_texture = load("res://Assets/Textures/gothic_floor.png")
 		_floor_mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-		_floor_mat.uv1_scale = Vector3(0.5, 0.5, 0.5)
+		_floor_mat.uv1_scale = Vector3(0.15, 0.15, 0.15)
 		_floor_mat.uv1_triplanar = true
 		_floor_mat.uv1_world_triplanar = true
 
 	_ceiling_mat = StandardMaterial3D.new()
-	_ceiling_mat.albedo_color = Color(0.4, 0.4, 0.4)
+	_ceiling_mat.albedo_color = Color(1.0, 1.0, 1.0)
 	_ceiling_mat.roughness = 1.0
-	if ResourceLoader.exists("res://Assets/Models/environment/Castles_and_Forts_Walls.png"):
-		_ceiling_mat.albedo_texture = load("res://Assets/Models/environment/Castles_and_Forts_Walls.png")
+	if ResourceLoader.exists("res://Assets/Models/environment/rock_concrete-texture-14-2247791614.jpg"):
+		_ceiling_mat.albedo_texture = load("res://Assets/Models/environment/rock_concrete-texture-14-2247791614.jpg")
 		_ceiling_mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-		_ceiling_mat.uv1_scale = Vector3(0.5, 0.5, 0.5)
+		_ceiling_mat.uv1_scale = Vector3(0.1, 0.1, 0.1)
 		_ceiling_mat.uv1_triplanar = true
 		_ceiling_mat.uv1_world_triplanar = true
 
@@ -124,7 +122,7 @@ func _build_maze() -> void:
 	var grid_w: int = maze_width * 2 + 1
 	var grid_h: int = maze_height * 2 + 1
 
-	# Build floor and ceiling for entire maze
+	# Build floor for entire maze
 	var total_w: float = grid_w * cell_size
 	var total_h: float = grid_h * cell_size
 
@@ -135,12 +133,13 @@ func _build_maze() -> void:
 	floor_box.use_collision = true
 	add_child(floor_box)
 
-	var ceil_box := CSGBox3D.new()
-	ceil_box.size = Vector3(total_w, 1.0, total_h)
-	ceil_box.position = Vector3(total_w / 2.0, wall_height + 0.5, total_h / 2.0)
-	ceil_box.material = _ceiling_mat
-	ceil_box.use_collision = true
-	add_child(ceil_box)
+	# Build ceiling for entire maze
+	var ceiling_box := CSGBox3D.new()
+	ceiling_box.size = Vector3(total_w, 1.0, total_h)
+	ceiling_box.position = Vector3(total_w / 2.0, wall_height + 0.5, total_h / 2.0)
+	ceiling_box.material = _ceiling_mat
+	ceiling_box.use_collision = true
+	add_child(ceiling_box)
 
 	# Build walls where grid is false
 	for gy in range(grid_h):
@@ -156,7 +155,21 @@ func _add_wall_block(gx: int, gy: int) -> void:
 		wall_height / 2.0,
 		gy * cell_size + cell_size / 2.0
 	)
-	wall.material = _wall_mat
+
+	# Create material with world triplanar for consistent texture tiling across all walls
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = Color(1.0, 1.0, 1.0)
+	mat.roughness = 1.0
+	if ResourceLoader.exists("res://Assets/Textures/gothic_big.png"):
+		mat.albedo_texture = load("res://Assets/Textures/gothic_big.png")
+		mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+		mat.uv1_triplanar = true
+		mat.uv1_world_triplanar = true
+		# Scale so texture tiles nicely - one texture per cell_size
+		var tex_scale: float = 1.0 / cell_size
+		mat.uv1_scale = Vector3(tex_scale, tex_scale, tex_scale)
+
+	wall.material = mat
 	wall.use_collision = true
 	add_child(wall)
 
@@ -198,7 +211,7 @@ func _add_torch(torch_scn: PackedScene, gx: int, gy: int, dx: int, dy: int) -> v
 	# Position in the passage cell, offset toward the wall
 	var pos := Vector3(
 		gx * cell_size + cell_size / 2.0 + dx * (cell_size / 2.0 - 0.15),
-		2.2,
+		4.0,
 		gy * cell_size + cell_size / 2.0 + dy * (cell_size / 2.0 - 0.15)
 	)
 	torch.position = pos
@@ -221,6 +234,15 @@ func _make_purple(torch: Node3D) -> void:
 	var light := torch.get_node_or_null("TorchLight")
 	if light:
 		light.light_color = Color(0.8, 0.6, 1.0)
+		light.shadow_enabled = true
+		light.omni_shadow_mode = OmniLight3D.SHADOW_CUBE
+		light.shadow_blur = 5.0
+		light.shadow_bias = 0.5
+
+	# Disable shadow casting on torch handle so it doesn't cast shadow under itself
+	var handle := torch.get_node_or_null("Handle")
+	if handle:
+		handle.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 
 	var particles := torch.get_node_or_null("FireParticles")
 	if particles and particles is GPUParticles3D:
@@ -267,7 +289,8 @@ func _spawn_enemies() -> void:
 
 	# Shuffle and pick cells for enemies
 	valid_cells.shuffle()
-	var enemies_to_spawn: int = min(num_enemies, valid_cells.size())
+	var total_enemies: int = num_enemies + num_brutes
+	var enemies_to_spawn: int = min(total_enemies, valid_cells.size())
 
 	for i in range(enemies_to_spawn):
 		var cell: Vector2i = valid_cells[i]
@@ -280,7 +303,26 @@ func _spawn_enemies() -> void:
 			0,
 			gy * cell_size + cell_size / 2.0
 		)
+
+		# Make brutes bigger and stronger
+		if i < num_brutes:
+			_make_brute(enemy)
+
 		add_child(enemy)
+
+func _make_brute(enemy: Node) -> void:
+	# Scale up the model
+	enemy.scale = Vector3(1.5, 1.5, 1.5)
+
+	# Modify stats - slower but tankier
+	enemy.set("move_speed", 0.8)
+	enemy.set("chase_speed", 1.5)
+	enemy.set("health", 100)
+	enemy.set("damage", 40)
+	enemy.set("attack_range", 2.5)
+
+	# Tag as brute for slower attack handling
+	enemy.set_meta("is_brute", true)
 
 func get_start_position() -> Vector3:
 	return _start_pos

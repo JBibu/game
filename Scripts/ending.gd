@@ -10,7 +10,7 @@ func _ready() -> void:
 		},
 		{
 			"image": load("res://Assets/Intro/finale@2x.png"),
-			"text": "Javi divisó por fin la luz del exterior. La libertad estaba al alcance de su mano."
+			"text": "Adán divisó por fin la luz del exterior. La libertad estaba al alcance de su mano."
 		},
 		{
 			"image": load("res://Assets/Intro/tasca_vacia.png"),
@@ -22,7 +22,7 @@ func _ready() -> void:
 		},
 		{
 			"image": load("res://Assets/Intro/tasca_vacia.png"),
-			"text": "Javi suspiró, contemplando el amanecer sobre una Murcia desierta. Menuda resaca le esperaba..."
+			"text": "Adán suspiró, contemplando el amanecer sobre una Murcia desierta. Menuda resaca le esperaba..."
 		},
 		{
 			"image": null,

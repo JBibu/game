@@ -1,17 +1,15 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=10 format=3 uid="uid://bij5vik0et5as"]
 
 [ext_resource type="PackedScene" uid="uid://dpg4nsmr2le08" path="res://Scenes/third_person_character.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://Scenes/dialog_box.tscn" id="2_dialog"]
 [ext_resource type="PackedScene" path="res://Scenes/interaction_prompt.tscn" id="3_prompt"]
 [ext_resource type="PackedScene" path="res://Scenes/health_ui.tscn" id="4_health"]
-[ext_resource type="AudioStream" uid="uid://chtgniqpxnh04" path="res://Assets/Sounds/Music/01-cave.mp3" id="5_music"]
-[ext_resource type="Script" path="res://Scripts/floor3.gd" id="6_floor3"]
-[ext_resource type="Script" path="res://Scripts/maze_generator.gd" id="7_maze"]
+[ext_resource type="AudioStream" uid="uid://7uhlp3vanoxw" path="res://Assets/Sounds/Music/01-cave.mp3" id="5_music"]
+[ext_resource type="Script" uid="uid://cuylilxsq2fgt" path="res://Scripts/floor3.gd" id="6_floor3"]
+[ext_resource type="Script" uid="uid://csqkchefgn0cm" path="res://Scripts/maze_generator.gd" id="7_maze"]
 
 [sub_resource type="Environment" id="Environment_maze"]
 background_mode = 1
-background_color = Color(0, 0, 0, 1)
-ambient_light_source = 0
 ambient_light_energy = 0.0
 
 [sub_resource type="CameraAttributesPractical" id="CameraAttributes_maze"]
@@ -38,7 +36,6 @@ autoplay = true
 
 [node name="Maze" type="Node3D" parent="."]
 script = ExtResource("7_maze")
-cell_size = 6.0
-wall_height = 8.0
-maze_width = 5
-maze_height = 5
+maze_width = 6
+maze_height = 6
+num_enemies = 6

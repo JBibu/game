@@ -1,43 +1,80 @@
-[gd_scene load_steps=4 format=3 uid="uid://bm4xrk8c5qvwl"]
+[gd_scene load_steps=9 format=3 uid="uid://bm4xrk8c5qvwl"]
 
 [ext_resource type="Script" path="res://Scripts/main_menu.gd" id="1_menu"]
 [ext_resource type="FontFile" path="res://Assets/Fonts/CormorantGaramond.ttf" id="2_font"]
 [ext_resource type="AudioStream" path="res://Assets/Sounds/Music/00-menu.wav" id="3_music"]
+[ext_resource type="PackedScene" uid="uid://m2nbymoxfykn" path="res://Assets/Blender/floor2.blend" id="4_map"]
+[ext_resource type="Script" uid="uid://dn6u7redt6x3y" path="res://Scripts/map_collision_generator.gd" id="5_collision"]
+[ext_resource type="PackedScene" path="res://Scenes/torch.tscn" id="6_torch"]
 
-[node name="MainMenu" type="Control"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-script = ExtResource("1_menu")
+[sub_resource type="Environment" id="Environment_menu"]
+background_mode = 1
+background_color = Color(0, 0, 0, 1)
+ambient_light_source = 2
+ambient_light_energy = 0.0
 
-[node name="Background" type="ColorRect" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-color = Color(0.05, 0.05, 0.08, 1)
+[sub_resource type="CameraAttributesPractical" id="CameraAttributes_menu"]
 
-[node name="MainContainer" type="VBoxContainer" parent="."]
-layout_mode = 1
+[node name="MainMenu" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_menu")
+camera_attributes = SubResource("CameraAttributes_menu")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(0.707107, -0.353553, 0.612372, 0, 0.866025, 0.5, -0.707107, -0.353553, 0.612372, 15, 5, -10)
+far = 50.0
+
+[node name="Map" parent="." instance=ExtResource("4_map")]
+transform = Transform3D(20, 0, 0, 0, 20, 0, 0, 0, 20, 13.506452, 6.5042706, -13.409673)
+script = ExtResource("5_collision")
+
+[node name="Torch" parent="." instance=ExtResource("6_torch")]
+transform = Transform3D(1, 0, 0, 0, 0.8721376, -0.4892607, 0, 0.4892607, 0.8721376, 6.356739, 0, -15.262036)
+
+[node name="Torch2" parent="." instance=ExtResource("6_torch")]
+transform = Transform3D(-0.117173456, 0.48589042, 0.8661299, 0, 0.8721376, -0.4892607, -0.9931115, -0.057328366, -0.10219137, 7.8362474, 0, -28.476646)
+
+[node name="Torch3" parent="." instance=ExtResource("6_torch")]
+transform = Transform3D(0.84969944, -0.25797117, -0.45984966, 0, 0.8721375, -0.48926064, 0.52726734, 0.41572458, 0.7410549, 32.081516, 0, -28.476646)
+
+[node name="Torch4" parent="." instance=ExtResource("6_torch")]
+transform = Transform3D(0.07360363, -0.48793364, -0.86977196, 1.5713791e-08, 0.8721375, -0.4892606, 0.9972876, 0.036011413, 0.06419256, 26.741964, 0, -9.361811)
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="MainContainer" type="VBoxContainer" parent="UI"]
 offset_left = 40.0
 offset_top = 40.0
 offset_right = 250.0
 offset_bottom = 200.0
 theme_override_constants/separation = 6
+script = ExtResource("1_menu")
 
-[node name="Title" type="Label" parent="MainContainer"]
+[node name="TitleContainer" type="VBoxContainer" parent="UI/MainContainer"]
+layout_mode = 2
+theme_override_constants/separation = -12
+
+[node name="Title" type="Label" parent="UI/MainContainer/TitleContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9, 0.85, 0.7, 1)
+theme_override_colors/font_outline_color = Color(0.1, 0.1, 0.1, 1)
+theme_override_constants/outline_size = 3
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 48
-text = "PLACEHOLDER"
+theme_override_font_sizes/font_size = 64
+text = "Tasca Story"
 
-[node name="Spacer" type="Control" parent="MainContainer"]
+[node name="Underline" type="ColorRect" parent="UI/MainContainer/TitleContainer"]
+custom_minimum_size = Vector2(250, 3)
+layout_mode = 2
+size_flags_horizontal = 0
+color = Color(0.9, 0.85, 0.7, 1)
+
+[node name="Spacer" type="Control" parent="UI/MainContainer"]
 custom_minimum_size = Vector2(0, 16)
 layout_mode = 2
 
-[node name="StartButton" type="Button" parent="MainContainer"]
+[node name="StartButton" type="Button" parent="UI/MainContainer"]
 layout_mode = 2
 focus_mode = 0
 theme_override_colors/font_color = Color(0.5, 0.48, 0.4, 1)
@@ -48,7 +85,7 @@ text = "Empezar Partida"
 flat = true
 alignment = 0
 
-[node name="OptionsButton" type="Button" parent="MainContainer"]
+[node name="OptionsButton" type="Button" parent="UI/MainContainer"]
 layout_mode = 2
 focus_mode = 0
 theme_override_colors/font_color = Color(0.5, 0.48, 0.4, 1)
@@ -59,7 +96,7 @@ text = "Opciones"
 flat = true
 alignment = 0
 
-[node name="QuitButton" type="Button" parent="MainContainer"]
+[node name="QuitButton" type="Button" parent="UI/MainContainer"]
 layout_mode = 2
 focus_mode = 0
 theme_override_colors/font_color = Color(0.5, 0.48, 0.4, 1)
@@ -70,38 +107,37 @@ text = "Salir"
 flat = true
 alignment = 0
 
-[node name="OptionsContainer" type="VBoxContainer" parent="."]
+[node name="OptionsContainer" type="VBoxContainer" parent="UI"]
 visible = false
-layout_mode = 1
 offset_left = 40.0
 offset_top = 40.0
 offset_right = 250.0
 offset_bottom = 200.0
 theme_override_constants/separation = 6
 
-[node name="Title" type="Label" parent="OptionsContainer"]
+[node name="Title" type="Label" parent="UI/OptionsContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9, 0.85, 0.7, 1)
 theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 48
 text = "Opciones"
 
-[node name="Spacer" type="Control" parent="OptionsContainer"]
+[node name="Spacer" type="Control" parent="UI/OptionsContainer"]
 custom_minimum_size = Vector2(0, 16)
 layout_mode = 2
 
-[node name="VolumeRow" type="HBoxContainer" parent="OptionsContainer"]
+[node name="VolumeRow" type="HBoxContainer" parent="UI/OptionsContainer"]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="Label" type="Label" parent="OptionsContainer/VolumeRow"]
+[node name="Label" type="Label" parent="UI/OptionsContainer/VolumeRow"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.5, 0.48, 0.4, 1)
 theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 28
 text = "Volumen"
 
-[node name="VolumeSlider" type="HSlider" parent="OptionsContainer/VolumeRow"]
+[node name="VolumeSlider" type="HSlider" parent="UI/OptionsContainer/VolumeRow"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 focus_mode = 0
@@ -109,7 +145,7 @@ min_value = 0.0
 max_value = 100.0
 value = 80.0
 
-[node name="FullscreenButton" type="Button" parent="OptionsContainer"]
+[node name="FullscreenButton" type="Button" parent="UI/OptionsContainer"]
 layout_mode = 2
 focus_mode = 0
 theme_override_colors/font_color = Color(0.5, 0.48, 0.4, 1)
@@ -120,7 +156,7 @@ text = "Pantalla completa: No"
 flat = true
 alignment = 0
 
-[node name="BackButton" type="Button" parent="OptionsContainer"]
+[node name="BackButton" type="Button" parent="UI/OptionsContainer"]
 layout_mode = 2
 focus_mode = 0
 theme_override_colors/font_color = Color(0.5, 0.48, 0.4, 1)

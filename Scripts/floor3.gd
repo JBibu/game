@@ -1,6 +1,6 @@
 extends Node3D
 
-@export var camera_far_clip: float = 25.0
+@export var camera_far_clip: float = 50.0
 
 @onready var dialog_box = $DialogBox
 @onready var maze = $Maze
@@ -65,4 +65,4 @@ func _start_intro_dialog() -> void:
 		},
 	]
 
-	dialog_box.start_dialog(dialogs, "Javi")
+	dialog_box.start_dialog(dialogs, "Adán")

@@ -211,11 +211,17 @@ func _check_attack_range() -> void:
 		current_state = State.ATTACK
 		is_attacking = true
 		current_anim = ""  # Reset so animation can play
-		_play_anim("attack")
+
+		# Brutes attack slower
+		var is_brute: bool = has_meta("is_brute") and get_meta("is_brute")
+		var attack_speed: float = 0.7 if is_brute else 1.0
+		var damage_delay: float = 1.5 if is_brute else 1.0
+
+		_play_anim("attack", attack_speed)
 		if sfx_attack:
 			sfx_attack.play()
 		# Delay damage to match animation
-		get_tree().create_timer(1.0).timeout.connect(_deal_damage)
+		get_tree().create_timer(damage_delay).timeout.connect(_deal_damage)
 
 func _attack(delta: float) -> void:
 	velocity.x = 0
@@ -286,12 +292,13 @@ func _setup_animations() -> void:
 	anim_player.add_animation_library("anims", library)
 	_play_anim("idle")
 
-func _play_anim(anim_name: String) -> void:
+func _play_anim(anim_name: String, speed: float = 1.0) -> void:
 	if is_attacking and anim_name != "attack":
 		return
 	var full_name := "anims/" + anim_name
 	if current_anim != anim_name and anim_player.has_animation(full_name):
 		anim_player.play(full_name, Utils.BLEND_TIME)
+		anim_player.speed_scale = speed
 		current_anim = anim_name
 
 # Damage and death
