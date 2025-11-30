@@ -14,13 +14,18 @@ signal finished
 var slides: Array[Dictionary] = []
 var current_slide: int = 0
 var can_advance: bool = false
-var is_typing: bool = false
-var full_text: String = ""
-var current_char: int = 0
-var char_count: int = 0
+var typewriter: Typewriter
 
 func _ready() -> void:
 	_set_elements_alpha(0.0)
+	typewriter = Typewriter.new()
+	typewriter.setup(get_tree(), text_speed, chars_per_sound)
+	typewriter.character_typed.connect(_on_character_typed)
+	typewriter.typing_finished.connect(_on_typing_finished)
+
+func _process(_delta: float) -> void:
+	if typewriter.is_typing():
+		label.text = typewriter.get_current_text()
 
 func setup(slide_data: Array[Dictionary]) -> void:
 	slides = slide_data
@@ -34,21 +39,14 @@ func _input(event: InputEvent) -> void:
 		_handle_advance()
 
 func _handle_advance() -> void:
-	if is_typing:
-		_skip_typing()
+	if typewriter.is_typing():
+		label.text = typewriter.skip()
+		audio_player.stop()
 	elif can_advance:
 		_next_slide()
 
-func _skip_typing() -> void:
-	current_char = full_text.length()
-	label.text = full_text
-	is_typing = false
-	can_advance = true
-	audio_player.stop()
-
 func _show_slide(index: int) -> void:
 	can_advance = false
-	is_typing = false
 	current_slide = index
 	var slide = slides[index]
 
@@ -61,39 +59,14 @@ func _show_slide(index: int) -> void:
 
 	placeholder_label.text = "Placeholder " + str(index + 1)
 	label.text = ""
-	full_text = slide.get("text", "")
-	current_char = 0
-	char_count = 0
 
 	await _fade_elements(1.0)
 
-	if full_text.length() > 0:
-		is_typing = true
-		_type_next_char()
+	var text: String = slide.get("text", "")
+	if text.length() > 0:
+		typewriter.start(text)
 	else:
 		can_advance = true
-
-func _type_next_char() -> void:
-	if not is_typing:
-		return
-
-	if current_char >= full_text.length():
-		is_typing = false
-		can_advance = true
-		return
-
-	var c := full_text[current_char]
-	label.text += c
-	current_char += 1
-
-	if c != " " and c != "\n":
-		char_count += 1
-		if char_count >= chars_per_sound:
-			char_count = 0
-			audio_player.stop()
-			audio_player.play()
-
-	get_tree().create_timer(text_speed).timeout.connect(_type_next_char)
 
 func _next_slide() -> void:
 	current_slide += 1
@@ -120,3 +93,10 @@ func _fade_elements(target_alpha: float, duration: float = 0.5) -> void:
 	tween.parallel().tween_property(placeholder_box, "modulate:a", target_alpha, duration)
 	tween.parallel().tween_property(placeholder_label, "modulate:a", target_alpha, duration)
 	await tween.finished
+
+func _on_character_typed(_char: String) -> void:
+	audio_player.stop()
+	audio_player.play()
+
+func _on_typing_finished() -> void:
+	can_advance = true

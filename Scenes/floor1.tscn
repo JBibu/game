@@ -1,0 +1,51 @@
+[gd_scene load_steps=12 format=3 uid="uid://drcxgmetbefvy"]
+
+[ext_resource type="PackedScene" uid="uid://dpg4nsmr2le08" path="res://Scenes/third_person_character.tscn" id="1_player"]
+[ext_resource type="PackedScene" uid="uid://b0egein5r48yx" path="res://Assets/Models/environment/floor1.glb" id="2_map"]
+[ext_resource type="PackedScene" path="res://Scenes/dialog_box.tscn" id="3_dialog"]
+[ext_resource type="PackedScene" path="res://Scenes/interaction_prompt.tscn" id="4_prompt"]
+[ext_resource type="PackedScene" path="res://Scenes/health_ui.tscn" id="5_health"]
+[ext_resource type="AudioStream" uid="uid://chtgniqpxnh04" path="res://Assets/Sounds/Music/01-cave.mp3" id="6_music"]
+[ext_resource type="Script" uid="uid://kvdjatsp63lw" path="res://Scripts/map_collision_generator.gd" id="7_collision"]
+[ext_resource type="PackedScene" uid="uid://jjtjxxb4e2b" path="res://Assets/Models/environment/stair1.glb" id="8_wxwll"]
+[ext_resource type="PackedScene" path="res://Scenes/enemy.tscn" id="9_juqag"]
+
+[sub_resource type="Environment" id="Environment_dark"]
+background_mode = 1
+background_color = Color(0.05, 0.05, 0.08, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.1, 0.1, 0.15, 1)
+
+[sub_resource type="CameraAttributesPractical" id="CameraAttributes_dark"]
+
+[node name="Floor1" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_dark")
+camera_attributes = SubResource("CameraAttributes_dark")
+
+[node name="ThirdPersonCharacter" parent="." instance=ExtResource("1_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="Map" parent="." instance=ExtResource("2_map")]
+transform = Transform3D(34.495, 0, 0, 0, 34.495, 0, 0, 0, 34.495, -19.452, 9.797, -20.893)
+script = ExtResource("7_collision")
+
+[node name="DialogBox" parent="." instance=ExtResource("3_dialog")]
+
+[node name="InteractionPrompt" parent="." instance=ExtResource("4_prompt")]
+
+[node name="HealthUI" parent="." instance=ExtResource("5_health")]
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_music")
+autoplay = true
+
+[node name="stair1" parent="." instance=ExtResource("8_wxwll")]
+transform = Transform3D(0.08073206, 0, 0.39176822, 0, 0.4, 0, -0.39176822, 0, 0.08073206, -42.609726, 0.29888296, -38.490284)
+
+[node name="Enemy" parent="." instance=ExtResource("9_juqag")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.1643386, 1.675991, -22.81014)
+
+[node name="Enemy2" parent="." instance=ExtResource("9_juqag")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.44341, 2.3043222, -27.423143)
