@@ -75,7 +75,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.1643386, 1.675991, -25.690
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.44341, 2.3043222, -29.904408)
 
 [node name="Enemy3" parent="." instance=ExtResource("9_juqag")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -45.958447, 1.5452857, -36.84899)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -42.97472, 1.5452857, -35.711006)
 
 [node name="SwordPickup" parent="." instance=ExtResource("13_sword_pickup")]
 transform = Transform3D(0.2690375, -0.8133234, -0.515872, 0, 0.5356205, -0.8444588, 0.9631297, 0.22719108, 0.14410199, -12.630741, 1.1646444, 5.4045)

@@ -15,9 +15,9 @@ signal damaged
 
 # Health
 @export var max_health: int = 100
-@export var heal_amount: int = 1
-@export var heal_interval: float = 0.3
-@export var heal_delay: float = 5.0
+@export var heal_amount: int = 5
+@export var heal_interval: float = 0.1
+@export var heal_delay: float = 3.0
 @export var low_health_threshold: float = 0.4
 var health: int = 100
 var invincible: bool = false

@@ -34,7 +34,7 @@ albedo_texture = ExtResource("16_walls_tex")
 uv1_scale = Vector3(6, 2, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_wall"]
-size = Vector3(6, 5, 1)
+size = Vector3(17.65, 5, 1)
 
 [node name="Floor2" type="Node3D"]
 script = ExtResource("8_floor2")
@@ -119,6 +119,7 @@ size = Vector3(17.65, 5, 1)
 material = SubResource("WallMaterial")
 
 [node name="WallCollision" type="CollisionShape3D" parent="CorridorWall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.760265, 0.12449074, 13.403686)
 shape = SubResource("BoxShape3D_wall")
 
 [node name="GemPedestal" parent="." instance=ExtResource("14_pedestal")]
