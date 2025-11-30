@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://drcxgmetbefvy"]
+[gd_scene load_steps=13 format=3 uid="uid://drcxgmetbefvy"]
 
 [ext_resource type="PackedScene" uid="uid://dpg4nsmr2le08" path="res://Scenes/third_person_character.tscn" id="1_player"]
 [ext_resource type="PackedScene" uid="uid://b0egein5r48yx" path="res://Assets/Models/environment/floor1.glb" id="2_map"]
@@ -9,12 +9,12 @@
 [ext_resource type="Script" uid="uid://kvdjatsp63lw" path="res://Scripts/map_collision_generator.gd" id="7_collision"]
 [ext_resource type="PackedScene" uid="uid://jjtjxxb4e2b" path="res://Assets/Models/environment/stair1.glb" id="8_wxwll"]
 [ext_resource type="PackedScene" path="res://Scenes/enemy.tscn" id="9_juqag"]
+[ext_resource type="PackedScene" uid="uid://ch387ax1orntb" path="res://Assets/Models/props/ps1_Sword.fbx" id="11_oosxv"]
 
 [sub_resource type="Environment" id="Environment_dark"]
 background_mode = 1
-background_color = Color(0.05, 0.05, 0.08, 1)
 ambient_light_source = 2
-ambient_light_color = Color(0.1, 0.1, 0.15, 1)
+ambient_light_energy = 0.0
 
 [sub_resource type="CameraAttributesPractical" id="CameraAttributes_dark"]
 
@@ -49,3 +49,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.1643386, 1.675991, -22.810
 
 [node name="Enemy2" parent="." instance=ExtResource("9_juqag")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.44341, 2.3043222, -27.423143)
+
+[node name="ps1_Sword" parent="." instance=ExtResource("11_oosxv")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.743516, 0.8085456, -1.0615506)
