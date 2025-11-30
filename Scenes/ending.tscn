@@ -1,8 +1,8 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=4 format=3 uid="uid://b04glcj2tl76s"]
 
-[ext_resource type="Script" path="res://Scripts/ending.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://cq1iwgpdpsej5" path="res://Scripts/ending.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://Scenes/intro_slideshow.tscn" id="2_slideshow"]
-[ext_resource type="AudioStream" path="res://Assets/Sounds/SFX/crickets.mp3" id="3_crickets"]
+[ext_resource type="AudioStream" uid="uid://s0w828844up5" path="res://Assets/Sounds/SFX/crickets.mp3" id="3_crickets"]
 
 [node name="Ending" type="Node"]
 script = ExtResource("1_script")

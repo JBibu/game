@@ -13,8 +13,8 @@ func _ready() -> void:
 			"text": "Por fin veo la luz. Ya casi estoy fuera."
 		},
 		{
-			"image": load("res://Assets/Intro/tasca_vacia.png"),
-			"text": "Pero al salir... silencio total."
+			"image": load("res://Assets/Intro/finale@2x.png"),
+			"text": "Espera... ¿Esa es la Catedral de Murcia? ¡He estado en la catedral todo este tiempo!"
 		},
 		{
 			"image": load("res://Assets/Intro/tasca_vacia.png"),
@@ -22,7 +22,7 @@ func _ready() -> void:
 		},
 		{
 			"image": load("res://Assets/Intro/tasca_vacia.png"),
-			"text": "Espera... ¿Esa es la Catedral de Murcia? ¡He estado en la catedral todo este tiempo!"
+			"text": "Tengo que tener más cuidado la próxima, no veas las cosas que echan en la bebida..."
 		},
 		{
 			"image": load("res://Assets/Intro/tasca_vacia.png"),
@@ -39,4 +39,4 @@ func _ready() -> void:
 
 func _on_ending_finished() -> void:
 	Inventory.clear()
-	SceneTransition.change_scene("res://Scenes/main_menu.tscn")
+	SceneTransition.change_scene("res://Scenes/credits.tscn")
