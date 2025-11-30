@@ -25,8 +25,6 @@ var invincible_time: float = 2.0
 var time_since_damage: float = 0.0
 var heal_timer: float = 0.0
 var low_health_overlay: ColorRect = null
-var sfx_heartbeat: AudioStreamPlayer = null
-var heartbeat_timer: float = 0.0
 
 # Combat
 @export var attack_damage: int = 25
@@ -91,14 +89,6 @@ func _setup_low_health_overlay() -> void:
 	canvas_layer.add_child(low_health_overlay)
 	low_health_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 
-	# Setup heartbeat sound
-	sfx_heartbeat = AudioStreamPlayer.new()
-	var heartbeat_path := "res://Assets/Sounds/SFX/heartbeat.wav"
-	if ResourceLoader.exists(heartbeat_path):
-		sfx_heartbeat.stream = load(heartbeat_path)
-	sfx_heartbeat.volume_db = -5.0
-	add_child(sfx_heartbeat)
-
 func _update_low_health_overlay(delta: float) -> void:
 	if not low_health_overlay:
 		return
@@ -112,17 +102,8 @@ func _update_low_health_overlay(delta: float) -> void:
 		var pulse := (sin(Time.get_ticks_msec() * 0.005) + 1.0) * 0.5
 		var alpha := intensity * 0.4 * (0.5 + pulse * 0.5)
 		low_health_overlay.color = Color(0.5, 0.0, 0.0, alpha)
-
-		# Heartbeat - faster when health is lower
-		var heartbeat_interval: float = lerpf(1.2, 0.5, intensity)
-		heartbeat_timer -= delta
-		if heartbeat_timer <= 0:
-			heartbeat_timer = heartbeat_interval
-			if sfx_heartbeat and sfx_heartbeat.stream:
-				sfx_heartbeat.play()
 	else:
 		low_health_overlay.color.a = 0.0
-		heartbeat_timer = 0.0
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:

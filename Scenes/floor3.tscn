@@ -39,3 +39,4 @@ script = ExtResource("7_maze")
 maze_width = 6
 maze_height = 6
 num_enemies = 6
+num_crosses = 3

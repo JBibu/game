@@ -16,6 +16,7 @@ var _ceiling_mat: StandardMaterial3D
 
 @export var num_enemies: int = 4
 @export var num_brutes: int = 2
+@export var num_crosses: int = 3
 
 func _ready() -> void:
 	randomize()
@@ -23,6 +24,8 @@ func _ready() -> void:
 	_generate_maze()
 	_build_maze()
 	_place_torches()
+	_place_crosses()
+	_place_exit_door()
 	_spawn_enemies()
 
 func _setup_materials() -> void:
@@ -323,6 +326,145 @@ func _make_brute(enemy: Node) -> void:
 
 	# Tag as brute for slower attack handling
 	enemy.set_meta("is_brute", true)
+
+func _place_crosses() -> void:
+	var cross_scn: PackedScene = null
+	if ResourceLoader.exists("res://Scenes/cross_decor.tscn"):
+		cross_scn = load("res://Scenes/cross_decor.tscn")
+	if not cross_scn:
+		return
+
+	var grid_w: int = maze_width * 2 + 1
+	var grid_h: int = maze_height * 2 + 1
+
+	# Collect valid wall positions for crosses
+	var valid_walls: Array[Dictionary] = []
+	for cy in range(maze_height):
+		for cx in range(maze_width):
+			var gx: int = cx * 2 + 1
+			var gy: int = cy * 2 + 1
+
+			# Check adjacent walls
+			for dir in [Vector2i(-1, 0), Vector2i(1, 0), Vector2i(0, -1), Vector2i(0, 1)]:
+				var wx: int = gx + dir.x
+				var wy: int = gy + dir.y
+				if wx >= 0 and wx < grid_w and wy >= 0 and wy < grid_h:
+					if not _grid[wy][wx]:  # This is a wall
+						valid_walls.append({"gx": gx, "gy": gy, "dx": dir.x, "dy": dir.y})
+
+	# Shuffle and pick walls for crosses
+	valid_walls.shuffle()
+	var crosses_to_place: int = min(num_crosses, valid_walls.size())
+
+	for i in range(crosses_to_place):
+		var wall_data: Dictionary = valid_walls[i]
+		_add_cross(cross_scn, wall_data["gx"], wall_data["gy"], wall_data["dx"], wall_data["dy"])
+
+func _add_cross(cross_scn: PackedScene, gx: int, gy: int, dx: int, dy: int) -> void:
+	var cross := cross_scn.instantiate()
+
+	# Position on wall, facing into the passage
+	var pos := Vector3(
+		gx * cell_size + cell_size / 2.0 + dx * (cell_size / 2.0 - 0.05),
+		3.0,
+		gy * cell_size + cell_size / 2.0 + dy * (cell_size / 2.0 - 0.05)
+	)
+	cross.position = pos
+
+	# Rotate to face away from wall
+	if dx == -1:  # Wall on left
+		cross.rotation.y = deg_to_rad(90)
+	elif dx == 1:  # Wall on right
+		cross.rotation.y = deg_to_rad(-90)
+	elif dy == -1:  # Wall behind
+		cross.rotation.y = deg_to_rad(0)
+	elif dy == 1:  # Wall in front
+		cross.rotation.y = deg_to_rad(180)
+
+	add_child(cross)
+
+func _place_exit_door() -> void:
+	var door_scn: PackedScene = null
+	if ResourceLoader.exists("res://Assets/Models/environment/door.blend"):
+		door_scn = load("res://Assets/Models/environment/door.blend")
+	if not door_scn:
+		return
+
+	# Find which wall is adjacent to end cell to place door
+	var end_cell := Vector2i(maze_width - 1, maze_height - 1)
+	var end_gx: int = end_cell.x * 2 + 1
+	var end_gy: int = end_cell.y * 2 + 1
+	var grid_w: int = maze_width * 2 + 1
+	var grid_h: int = maze_height * 2 + 1
+
+	# Check which direction has a wall to place the door on
+	var door_dx: int = 0
+	var door_dy: int = 0
+	for dir in [Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 0), Vector2i(0, -1)]:
+		var wx: int = end_gx + dir.x
+		var wy: int = end_gy + dir.y
+		if wx >= 0 and wx < grid_w and wy >= 0 and wy < grid_h:
+			if not _grid[wy][wx]:  # This is a wall
+				door_dx = dir.x
+				door_dy = dir.y
+				break
+
+	var door := door_scn.instantiate()
+
+	# Position door at the wall
+	var door_pos := Vector3(
+		end_gx * cell_size + cell_size / 2.0 + door_dx * (cell_size / 2.0),
+		0,
+		end_gy * cell_size + cell_size / 2.0 + door_dy * (cell_size / 2.0)
+	)
+	door.position = door_pos
+	door.position.y = 1.5
+
+	# Scale door to half size
+	door.scale = Vector3(0.5, 0.5, 0.5)
+
+	# Rotate door to match wall orientation
+	if door_dx == 1:  # Wall on right
+		door.rotation.y = deg_to_rad(0)
+	elif door_dx == -1:  # Wall on left
+		door.rotation.y = deg_to_rad(180)
+	elif door_dy == 1:  # Wall in front
+		door.rotation.y = deg_to_rad(-90)
+	elif door_dy == -1:  # Wall behind
+		door.rotation.y = deg_to_rad(90)
+
+	# Apply texture to door
+	_apply_door_texture(door)
+
+	add_child(door)
+
+	# Add green glow light
+	var light := OmniLight3D.new()
+	light.light_color = Color(0.2, 1.0, 0.4)
+	light.light_energy = 2.0
+	light.omni_range = 6.0
+	light.position = door_pos + Vector3(0, 2, 0)
+	add_child(light)
+
+func _apply_door_texture(door: Node) -> void:
+	var texture: Texture2D = null
+	if ResourceLoader.exists("res://Assets/Models/environment/door.jpg"):
+		texture = load("res://Assets/Models/environment/door.jpg")
+	if not texture:
+		return
+
+	for child in door.get_children():
+		if child is MeshInstance3D:
+			var mesh_instance := child as MeshInstance3D
+			var mat := StandardMaterial3D.new()
+			mat.albedo_texture = texture
+			mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+			for i in range(mesh_instance.get_surface_override_material_count()):
+				mesh_instance.set_surface_override_material(i, mat)
+			if mesh_instance.get_surface_override_material_count() == 0 and mesh_instance.mesh:
+				for i in range(mesh_instance.mesh.get_surface_count()):
+					mesh_instance.set_surface_override_material(i, mat)
+		_apply_door_texture(child)
 
 func get_start_position() -> Vector3:
 	return _start_pos

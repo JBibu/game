@@ -14,7 +14,7 @@ signal fishing_failed
 
 # Progress
 @export var catch_rate: float = 0.4
-@export var lose_rate: float = 0.3
+@export var lose_rate: float = 0.2
 
 # UI
 var background: ColorRect

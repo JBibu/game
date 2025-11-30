@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://b4la8f46wuxlj"]
+[gd_scene load_steps=24 format=3 uid="uid://b4la8f46wuxlj"]
 
 [ext_resource type="PackedScene" uid="uid://dpg4nsmr2le08" path="res://Scenes/third_person_character.tscn" id="1_player"]
 [ext_resource type="PackedScene" uid="uid://cke550yoc0y0l" path="res://Assets/Blender/floor2.blend" id="2_map"]
@@ -17,6 +17,7 @@
 [ext_resource type="PackedScene" path="res://Scenes/stair_trigger.tscn" id="15_stair"]
 [ext_resource type="Texture2D" uid="uid://coh7ga77i4172" path="res://Assets/Models/environment/Rocks_W.jpg" id="16_walls_tex"]
 [ext_resource type="PackedScene" uid="uid://b1jbh6hbnuuob" path="res://Assets/Models/environment/stair1.glb" id="17_stair_mesh"]
+[ext_resource type="PackedScene" path="res://Scenes/star_decor.tscn" id="18_star_decor"]
 
 [sub_resource type="Environment" id="Environment_dark"]
 background_mode = 1
@@ -130,3 +131,12 @@ script = ExtResource("7_collision")
 
 [node name="StairTrigger" parent="Stair" instance=ExtResource("15_stair")]
 target_scene = "res://Scenes/floor3.tscn"
+
+[node name="StarDecor" parent="." instance=ExtResource("18_star_decor")]
+transform = Transform3D(-0.9794691, 0.0051741363, 0.20152716, -0.026831735, 0.9874305, -0.1557605, -0.19980003, -0.15796994, -0.96701884, -2.4628115, 2.1214812, 3.1606083)
+
+[node name="StarDecor2" parent="." instance=ExtResource("18_star_decor")]
+transform = Transform3D(-0.3841163, -0.15403838, -0.91034436, -0.026831731, 0.9874304, -0.1557605, 0.9228948, -0.035404004, -0.38342115, 30.372316, 1.6440153, -14.067208)
+
+[node name="StarDecor3" parent="." instance=ExtResource("18_star_decor")]
+transform = Transform3D(0.9906649, 0.04709892, 0.12792492, -0.026831731, 0.9874305, -0.15576051, -0.13365304, 0.15087399, 0.97947633, 12.829849, 1.6440153, -32.391724)

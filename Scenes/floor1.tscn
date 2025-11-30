@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://drcxgmetbefvy"]
+[gd_scene load_steps=31 format=3 uid="uid://drcxgmetbefvy"]
 
 [ext_resource type="PackedScene" uid="uid://dpg4nsmr2le08" path="res://Scenes/third_person_character.tscn" id="1_player"]
 [ext_resource type="PackedScene" uid="uid://c178k2e5sh35a" path="res://Assets/Blender/floor1.blend" id="2_map"]
@@ -25,6 +25,7 @@
 [ext_resource type="PackedScene" path="res://Scenes/chest.tscn" id="23_chest"]
 [ext_resource type="Script" uid="uid://bxep6erfud6jw" path="res://Scripts/door_trigger.gd" id="24_door_trigger"]
 [ext_resource type="PackedScene" path="res://Scenes/wall_decor.tscn" id="25_2p860"]
+[ext_resource type="PackedScene" uid="uid://2f3ewe6oga4o" path="res://Assets/Models/environment/chest.blend" id="26_804ks"]
 
 [sub_resource type="Environment" id="Environment_dark"]
 background_mode = 1
@@ -242,7 +243,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 1, -10)
 dialog_text = "Has encontrado una llave! Quiza pueda abrir alguna puerta..."
 
 [node name="Chest" parent="." instance=ExtResource("23_chest")]
-transform = Transform3D(1.0340267, 0, -0.73225445, 0, 1, 0, 0.88802266, 0, 0.85264784, -0.2526493, 0.77886033, -44.270283)
+transform = Transform3D(-0.7986459, 0, 0.60180116, 0, 1, 0, -0.60180116, 0, -0.7986459, 2.9371243, 0.8004687, -41.54161)
+visible = false
 
 [node name="DoorTrigger" type="Area3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -32, 2, -34)
@@ -262,3 +264,6 @@ transform = Transform3D(-3.510217, -0.016945874, 0.012194683, 0.03326221, 0.3091
 
 [node name="WallDecor2" parent="." instance=ExtResource("25_2p860")]
 transform = Transform3D(1.0129793, -0.00085348904, 0.081610136, -0.17744145, 0.33514956, 0.0014916661, -3.399245, -0.017749235, 0.024242051, -42.751495, 1.6979103, -16.856142)
+
+[node name="chest" parent="." instance=ExtResource("26_804ks")]
+transform = Transform3D(0.27160853, 0, 0.22074601, 0, 0.35, 0, -0.22074601, 0, 0.27160853, 2.727636, 1.0979323, -41.39197)
