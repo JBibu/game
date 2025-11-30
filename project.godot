@@ -54,10 +54,3 @@ move_right={
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0
-
-[shader_globals]
-
-precision_multiplier={
-"type": "float",
-"value": 1.0
-}

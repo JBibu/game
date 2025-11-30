@@ -1,47 +1,129 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://Scripts/dialog_box.gd" id="1_script"]
 [ext_resource type="FontFile" path="res://Assets/Fonts/CormorantGaramond.ttf" id="2_font"]
 [ext_resource type="AudioStream" path="res://Assets/Sounds/SFX/typewriter.mp3" id="3_sound"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_letterbox"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.02, 0.02, 0.04, 0.92)
+border_width_left = 0
+border_width_top = 1
+border_width_right = 0
+border_width_bottom = 0
+border_color = Color(0.85, 0.75, 0.55, 0.3)
+corner_radius_top_left = 0
+corner_radius_top_right = 0
+corner_radius_bottom_right = 0
+corner_radius_bottom_left = 0
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 32.0
+content_margin_bottom = 0.0
+
 [node name="DialogBox" type="CanvasLayer" groups=["dialog"]]
 script = ExtResource("1_script")
+
+[node name="TopBar" type="ColorRect" parent="."]
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 60.0
+grow_horizontal = 2
+color = Color(0, 0, 0, 1)
+
+[node name="BottomBar" type="ColorRect" parent="."]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -60.0
+grow_horizontal = 2
+grow_vertical = 0
+color = Color(0, 0, 0, 1)
 
 [node name="Panel" type="PanelContainer" parent="."]
 anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 64.0
-offset_top = -100.0
-offset_right = -64.0
-offset_bottom = -24.0
+offset_top = -160.0
+offset_bottom = -60.0
 grow_horizontal = 2
 grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 
-[node name="MarginContainer" type="MarginContainer" parent="Panel"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel"]
 layout_mode = 2
-theme_override_constants/margin_left = 16
-theme_override_constants/margin_top = 16
-theme_override_constants/margin_right = 16
-theme_override_constants/margin_bottom = 16
+size_flags_vertical = 3
+theme_override_constants/separation = 24
 
-[node name="Label" type="Label" parent="Panel/MarginContainer"]
+[node name="Portrait" type="TextureRect" parent="Panel/HBoxContainer"]
+texture_filter = 1
+clip_contents = true
+custom_minimum_size = Vector2(120, 100)
 layout_mode = 2
+size_flags_vertical = 3
+expand_mode = 1
+stretch_mode = 6
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_constants/separation = 4
+
+[node name="MarginContainer" type="MarginContainer" parent="Panel/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="VBox" type="VBoxContainer" parent="Panel/HBoxContainer/VBoxContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="NameLabel" type="Label" parent="Panel/HBoxContainer/VBoxContainer/MarginContainer/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.75, 0.55, 1)
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 14
+text = ""
+uppercase = true
+
+[node name="Label" type="Label" parent="Panel/HBoxContainer/VBoxContainer/MarginContainer/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.95, 0.95, 0.93, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 18
 text = ""
 autowrap_mode = 2
+vertical_alignment = 1
 
-[node name="ContinueLabel" type="Label" parent="Panel"]
+[node name="ContinueIndicator" type="Control" parent="Panel"]
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 8
-theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+
+[node name="ContinueLabel" type="Label" parent="Panel/ContinueIndicator"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.85, 0.75, 0.55, 0.8)
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 16
-text = "Pulsa E para continuar..."
-horizontal_alignment = 2
+theme_override_font_sizes/font_size = 14
+text = "▼"
+horizontal_alignment = 1
 vertical_alignment = 2
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]

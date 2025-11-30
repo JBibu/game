@@ -26,8 +26,6 @@ var is_attacking: bool = false
 var current_anim: String = ""
 const BLEND_TIME := 0.15
 
-# Material
-@export var skeleton_material: Material
 
 # Health bar
 var max_health: int
@@ -39,7 +37,6 @@ func _ready() -> void:
 	max_health = health
 	if patrol_points.is_empty():
 		patrol_points = [start_position]
-	_apply_material()
 	_setup_animations()
 	_setup_health_bar()
 
@@ -172,21 +169,6 @@ func _deal_damage() -> void:
 	if distance < attack_range * 2.0:
 		if player.has_method("take_damage"):
 			player.take_damage(damage)
-
-func _apply_material() -> void:
-	if not skeleton_material or not model:
-		return
-	_apply_material_recursive(model)
-
-func _apply_material_recursive(node: Node) -> void:
-	if node is MeshInstance3D:
-		var mesh_instance := node as MeshInstance3D
-		mesh_instance.material_override = skeleton_material
-		# Also try surface materials
-		for i in range(mesh_instance.get_surface_override_material_count()):
-			mesh_instance.set_surface_override_material(i, skeleton_material)
-	for child in node.get_children():
-		_apply_material_recursive(child)
 
 # Animation setup
 

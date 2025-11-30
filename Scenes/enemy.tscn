@@ -1,8 +1,7 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://Scripts/enemy.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://Assets/Models/skeleton/skeleton.fbx" id="2_skeleton"]
-[ext_resource type="Material" path="res://Assets/Materials/skeleton_material.tres" id="6_material"]
 [ext_resource type="PackedScene" path="res://Assets/Models/skeleton/zombie idle.fbx" id="3_idle"]
 [ext_resource type="PackedScene" path="res://Assets/Models/skeleton/zombie run.fbx" id="4_walk"]
 [ext_resource type="PackedScene" path="res://Assets/Models/skeleton/zombie attack.fbx" id="5_attack"]
@@ -13,7 +12,6 @@ height = 1.68
 
 [node name="Enemy" type="CharacterBody3D" groups=["enemy"]]
 script = ExtResource("1_script")
-skeleton_material = ExtResource("6_material")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.84, 0)

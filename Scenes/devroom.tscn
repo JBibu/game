@@ -1,7 +1,6 @@
-[gd_scene load_steps=16 format=3 uid="uid://dc37ohj48hup6"]
+[gd_scene load_steps=14 format=3 uid="uid://dc37ohj48hup6"]
 
 [ext_resource type="PackedScene" uid="uid://dpg4nsmr2le08" path="res://Scenes/third_person_character.tscn" id="1_mc8ns"]
-[ext_resource type="Material" uid="uid://4mjx783rv4iu" path="res://Assets/Materials/psx_ground_material.tres" id="2_vx73m"]
 [ext_resource type="PackedScene" path="res://Scenes/dialog_box.tscn" id="3_dialog"]
 [ext_resource type="PackedScene" path="res://Scenes/interaction_prompt.tscn" id="4_prompt"]
 [ext_resource type="PackedScene" path="res://Scenes/enemy.tscn" id="5_enemy"]
@@ -71,7 +70,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 [node name="Ground" type="StaticBody3D" parent="."]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Ground"]
-material_override = ExtResource("2_vx73m")
 mesh = SubResource("PlaneMesh_xh2yk")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Ground"]
