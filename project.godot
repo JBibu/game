@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 SceneTransition="*res://Scenes/scene_transition.tscn"
 Inventory="*res://Scripts/inventory.gd"
+DialogManager="*res://Scripts/dialog_manager.gd"
 
 [display]
 
@@ -53,4 +54,5 @@ move_right={
 
 [rendering]
 
+occlusion_culling/use_occlusion_culling=true
 textures/canvas_textures/default_texture_filter=0

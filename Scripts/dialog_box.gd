@@ -51,6 +51,10 @@ func _ready() -> void:
 	typewriter.character_typed.connect(_on_character_typed)
 	typewriter.typing_finished.connect(_on_typing_finished)
 	_load_emotion_textures()
+	DialogManager.register_dialog_box(self)
+
+func is_dialog_active() -> bool:
+	return is_active
 
 func _load_emotion_textures() -> void:
 	var emotions = ["angry", "fear", "happy", "idle", "intrigued", "sad", "surprised"]
@@ -141,6 +145,7 @@ func _show_current_dialog() -> void:
 
 	if portrait and emotion_textures.has(emotion):
 		portrait.texture = emotion_textures[emotion]
+		portrait.flip_h = true
 		portrait.visible = true
 	elif portrait:
 		portrait.visible = false

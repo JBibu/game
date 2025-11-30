@@ -37,6 +37,13 @@ var is_attacking: bool = false
 @onready var glowstick_mesh: MeshInstance3D = $GlowstickMesh
 @onready var glowstick_light: OmniLight3D = $GlowstickLight
 
+# Sound effects
+var sfx_footstep: AudioStreamPlayer
+var sfx_hurt: AudioStreamPlayer
+var sfx_sword_swing: AudioStreamPlayer
+var footstep_timer: float = 0.0
+var footstep_interval: float = 0.5
+
 # Internal state
 var camera_rotation: Vector2 = Vector2.ZERO
 var current_anim: String = ""
@@ -49,15 +56,21 @@ var right_hand_bone_idx: int = -1
 # Sword
 var sword_mesh: Node3D = null
 
-const BLEND_TIME := 0.15
-
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	health = max_health
+	# Initialize camera rotation from character's starting rotation
+	camera_rotation.y = rad_to_deg(rotation.y)
 	_setup_animations()
 	_setup_glowstick()
 	_setup_sword()
+	_setup_sounds()
 	Inventory.sword_equipped_changed.connect(_on_sword_equipped_changed)
+
+func _setup_sounds() -> void:
+	sfx_footstep = Utils.create_audio_player(self, "res://Assets/Sounds/SFX/footstep.wav", -18.0)
+	sfx_hurt = Utils.create_audio_player(self, "res://Assets/Sounds/SFX/player_hurt.wav")
+	sfx_sword_swing = Utils.create_audio_player(self, "res://Assets/Sounds/SFX/sword_swing.wav")
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
@@ -86,8 +99,9 @@ func _input(event: InputEvent) -> void:
 			_attack()
 
 func _physics_process(delta: float) -> void:
-	camera_pivot.rotation_degrees.x = camera_rotation.x
-	camera_pivot.rotation_degrees.y = camera_rotation.y
+	# Set camera rotation in global space (independent of character rotation)
+	camera_pivot.global_rotation_degrees.x = camera_rotation.x
+	camera_pivot.global_rotation_degrees.y = camera_rotation.y
 
 	_check_interactables()
 
@@ -114,7 +128,9 @@ func _physics_process(delta: float) -> void:
 			velocity.x = direction.x * speed
 			velocity.z = direction.z * speed
 			var target_angle := atan2(direction.x, direction.z)
-			model.rotation.y = lerp_angle(model.rotation.y, target_angle, rotation_speed * delta)
+			# Model rotation needs to account for character's base rotation
+			var local_target_angle := target_angle - rotation.y
+			model.rotation.y = lerp_angle(model.rotation.y, local_target_angle, rotation_speed * delta)
 			_play_anim("run" if is_running else "walk")
 		else:
 			velocity.x = move_toward(velocity.x, 0, move_speed)
@@ -125,6 +141,7 @@ func _physics_process(delta: float) -> void:
 	_update_glowstick()
 	_update_sword()
 	_update_healing(delta)
+	_update_footsteps(delta, direction, is_running)
 
 # Animation setup
 
@@ -145,7 +162,7 @@ func _setup_animations() -> void:
 	# Setup base animations (full body)
 	for anim_name in base_sources:
 		var source_node: Node = base_sources[anim_name]
-		var source_player := _find_anim_player(source_node)
+		var source_player := Utils.find_anim_player(source_node)
 
 		if source_player and source_player.get_animation_list().size() > 0:
 			var orig_anim_name = source_player.get_animation_list()[0]
@@ -169,7 +186,7 @@ func _setup_animations() -> void:
 
 	# Setup attack animation (upper body only) in separate player
 	var attack_source := $AttackAnim
-	var attack_player := _find_anim_player(attack_source)
+	var attack_player := Utils.find_anim_player(attack_source)
 	if attack_player and attack_player.get_animation_list().size() > 0:
 		var orig_anim_name = attack_player.get_animation_list()[0]
 		var anim: Animation = attack_player.get_animation(orig_anim_name).duplicate()
@@ -203,19 +220,10 @@ func _setup_animations() -> void:
 	attack_anim_player.add_animation_library("anims", attack_library)
 	_play_anim("idle")
 
-func _find_anim_player(node: Node) -> AnimationPlayer:
-	if node is AnimationPlayer:
-		return node
-	for child in node.get_children():
-		var result = _find_anim_player(child)
-		if result:
-			return result
-	return null
-
 func _play_anim(anim_name: String) -> void:
 	var full_name := "anims/" + anim_name
 	if current_anim != anim_name and anim_player.has_animation(full_name):
-		anim_player.play(full_name, BLEND_TIME)
+		anim_player.play(full_name, Utils.BLEND_TIME)
 		current_anim = anim_name
 
 # Glowstick
@@ -275,6 +283,19 @@ func get_interaction_prompt() -> String:
 		return "[E] " + nearest_interactable.get_prompt()
 	return ""
 
+func _update_footsteps(delta: float, direction: Vector3, is_running: bool) -> void:
+	if not is_on_floor() or direction.length() < 0.1:
+		footstep_timer = 0.0
+		return
+
+	var interval := footstep_interval * (0.6 if is_running else 1.0)
+	footstep_timer += delta
+	if footstep_timer >= interval:
+		footstep_timer = 0.0
+		if sfx_footstep:
+			sfx_footstep.pitch_scale = randf_range(0.9, 1.1)
+			sfx_footstep.play()
+
 # Health and damage
 
 func take_damage(amount: int) -> void:
@@ -294,10 +315,37 @@ func take_damage(amount: int) -> void:
 		tween.tween_interval(0.1)
 		tween.set_loops(5)
 
+	_camera_shake(0.3, 0.5)
+
+	if sfx_hurt:
+		sfx_hurt.play()
+
 	get_tree().create_timer(invincible_time).timeout.connect(func(): invincible = false)
 
 	if health <= 0:
 		_die()
+
+func _camera_shake(duration: float, intensity: float) -> void:
+	var camera := camera_pivot.get_node("Camera3D") if camera_pivot.has_node("Camera3D") else null
+	if not camera:
+		return
+
+	var original_pos: Vector3 = camera.position
+	var tween := create_tween()
+	var steps := 10
+	var step_duration := duration / steps
+
+	for i in range(steps):
+		var offset := Vector3(
+			randf_range(-intensity, intensity),
+			randf_range(-intensity, intensity),
+			0
+		)
+		# Reduce intensity over time
+		offset *= (1.0 - float(i) / steps)
+		tween.tween_property(camera, "position", original_pos + offset, step_duration)
+
+	tween.tween_property(camera, "position", original_pos, step_duration)
 
 func _set_model_visible(vis: bool) -> void:
 	if model:
@@ -366,17 +414,24 @@ func _attack() -> void:
 	is_attacking = true
 
 	# Play attack animation on separate player (upper body only)
-	attack_anim_player.play("anims/attack", BLEND_TIME)
+	attack_anim_player.play("anims/attack", Utils.BLEND_TIME)
+
+	# Play sword swing sound delayed to match animation
+	get_tree().create_timer(0.7).timeout.connect(func():
+		if sfx_sword_swing:
+			sfx_sword_swing.play()
+	)
 
 	# Deal damage slightly into the animation
 	get_tree().create_timer(0.7).timeout.connect(_deal_attack_damage)
 
-	# End attack when animation finishes
-	get_tree().create_timer(attack_cooldown).timeout.connect(func():
-		can_attack = true
-		is_attacking = false
-		current_anim = ""  # Reset to allow other anims
-	)
+	# Wait for animation to fully finish before allowing next attack
+	attack_anim_player.animation_finished.connect(_on_attack_finished, CONNECT_ONE_SHOT)
+
+func _on_attack_finished(_anim_name: String) -> void:
+	can_attack = true
+	is_attacking = false
+	current_anim = ""  # Reset to allow other anims
 
 func _deal_attack_damage() -> void:
 	var enemies := get_tree().get_nodes_in_group("enemy")
