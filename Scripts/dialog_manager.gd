@@ -5,9 +5,9 @@ var dialog_box: Node = null
 func register_dialog_box(box: Node) -> void:
 	dialog_box = box
 
-func show_dialog(text: String) -> void:
+func show_dialog(text: String, emotion: String = "") -> void:
 	if dialog_box and dialog_box.has_method("show_dialog"):
-		dialog_box.show_dialog(text)
+		dialog_box.show_dialog(text, emotion)
 
 func start_dialog(dialog_array: Array[Dictionary], character_name: String = "") -> void:
 	if dialog_box and dialog_box.has_method("start_dialog"):

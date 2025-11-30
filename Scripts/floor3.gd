@@ -56,11 +56,11 @@ func _setup_exit() -> void:
 func _start_intro_dialog() -> void:
 	var dialogs: Array[Dictionary] = [
 		{
-			"text": "Un laberinto... Esto no pinta nada bien.",
+			"text": "Acho, un laberinto... Esto no pinta nada bien.",
 			"emotion": "fear"
 		},
 		{
-			"text": "Tengo que encontrar la salida. Rápido.",
+			"text": "Tengo que encontrar la salida. Ya.",
 			"emotion": "intrigued"
 		},
 	]

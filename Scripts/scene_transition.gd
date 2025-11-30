@@ -7,7 +7,7 @@ func _ready() -> void:
 	color_rect.color = Color(0, 0, 0, 1)
 	fade_in()
 
-func fade_in(duration: float = 1.0) -> void:
+func fade_in(duration: float = 1.5) -> void:
 	if tween:
 		tween.kill()
 	tween = create_tween()

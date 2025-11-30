@@ -18,7 +18,7 @@ func _on_interact() -> void:
 		return
 
 	if requires_sword and not Inventory.has_item("sword"):
-		DialogManager.show_dialog(no_sword_dialog)
+		DialogManager.show_dialog(no_sword_dialog, "fear")
 		return
 
 	SceneTransition.change_scene(target_scene, fade_duration)

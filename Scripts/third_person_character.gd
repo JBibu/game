@@ -1,5 +1,7 @@
 extends CharacterBody3D
 
+signal damaged
+
 # Movement
 @export var move_speed: float = 5.0
 @export var run_speed: float = 8.0
@@ -140,7 +142,7 @@ func _input(event: InputEvent) -> void:
 			_play_anim("gangnam")
 
 	if event is InputEventKey and event.pressed and event.keycode == KEY_E:
-		if nearest_interactable:
+		if nearest_interactable and is_instance_valid(nearest_interactable):
 			nearest_interactable.interact()
 
 	# Attack with left mouse button
@@ -330,8 +332,10 @@ func _check_interactables() -> void:
 	nearest_interactable = closest
 
 func get_interaction_prompt() -> String:
-	if nearest_interactable:
-		return "[E] " + nearest_interactable.get_prompt()
+	if nearest_interactable and is_instance_valid(nearest_interactable):
+		var prompt := nearest_interactable.get_prompt()
+		if prompt != "":
+			return "[E] " + prompt
 	return ""
 
 func _update_footsteps(delta: float, direction: Vector3, is_running: bool) -> void:
@@ -357,6 +361,7 @@ func take_damage(amount: int) -> void:
 	invincible = true
 	time_since_damage = 0.0
 	heal_timer = 0.0
+	damaged.emit()
 
 	if model:
 		var tween := create_tween()

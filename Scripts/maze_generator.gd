@@ -90,7 +90,7 @@ func _generate_maze() -> void:
 
 	# Set start and end positions (cell centers)
 	# Start cell is (0,0) -> grid position (1,1)
-	_start_pos = Vector3(cell_size + cell_size / 2.0, 1, cell_size + cell_size / 2.0)
+	_start_pos = Vector3(cell_size + cell_size / 2.0, 0.3, cell_size + cell_size / 2.0)
 	# End cell is (maze_width-1, maze_height-1) -> grid position (maze_width*2-1, maze_height*2-1)
 	var end_gx: int = (maze_width - 1) * 2 + 1
 	var end_gy: int = (maze_height - 1) * 2 + 1

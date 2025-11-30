@@ -242,7 +242,7 @@ func _deal_damage() -> void:
 		return
 
 	var distance := global_position.distance_to(player.global_position)
-	if distance < attack_range * 2.0:
+	if distance < attack_range * 1.6:
 		if player.has_method("take_damage"):
 			player.take_damage(damage)
 

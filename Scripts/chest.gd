@@ -33,7 +33,7 @@ func _give_item() -> void:
 		Inventory.add_key()
 
 func _show_dialog() -> void:
-	DialogManager.show_dialog(dialog_text)
+	DialogManager.show_dialog(dialog_text, "happy")
 
 func _open_animation() -> void:
 	var tween := create_tween()

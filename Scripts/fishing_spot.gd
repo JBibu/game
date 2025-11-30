@@ -2,7 +2,7 @@ extends Interactable
 class_name FishingSpot
 
 @export var reward_item: String = "key"
-@export var fish_dialog: String = "¡Vaya! Una llave oxidada. Alguien debió perderla hace mucho tiempo..."
+@export var fish_dialog: String = "¡Vaya! Una gema justo del tamaño del pedestal. ¡Esta es la mía!"
 
 var has_been_fished: bool = false
 var is_fishing: bool = false
@@ -17,7 +17,7 @@ func interact() -> void:
 		return
 
 	if not Inventory.has_item("fishing_rod"):
-		DialogManager.show_dialog("Aquí parece haber algo bajo el agua... pero sin caña no puedo hacer nada.")
+		DialogManager.show_dialog("Aquí parece haber algo bajo el agua... pero sin caña no puedo hacer nada.", "intrigued")
 		return
 
 	_start_fishing()
@@ -47,7 +47,7 @@ func _on_fishing_success() -> void:
 	if reward_item != "":
 		Inventory.add_item(reward_item)
 
-	DialogManager.show_dialog(fish_dialog)
+	DialogManager.show_dialog(fish_dialog, "surprised")
 
 	if fishing_minigame:
 		fishing_minigame.queue_free()
@@ -55,7 +55,7 @@ func _on_fishing_success() -> void:
 
 func _on_fishing_failed() -> void:
 	is_fishing = false
-	DialogManager.show_dialog("¡Maldición! Se me ha escapado. Tendré que intentarlo otra vez.")
+	DialogManager.show_dialog("¡Maldición! Se me ha escapado. Tendré que intentarlo otra vez.", "angry")
 
 	if fishing_minigame:
 		fishing_minigame.queue_free()

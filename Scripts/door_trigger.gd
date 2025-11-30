@@ -26,10 +26,10 @@ func _try_open_door() -> void:
 		if Inventory.has_key():
 			Inventory.use_key()
 			is_unlocked = true
-			DialogManager.show_dialog(unlock_dialog)
+			DialogManager.show_dialog(unlock_dialog, "happy")
 			_open_door()
 		else:
-			DialogManager.show_dialog(locked_dialog)
+			DialogManager.show_dialog(locked_dialog, "sad")
 	else:
 		is_unlocked = true
 		_open_door()

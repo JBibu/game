@@ -2,8 +2,8 @@ extends Interactable
 class_name GemPedestal
 
 @export var required_gem: String = "gem"
-@export var no_gem_dialog: String = "Hay una hendidura con forma extraña... Parece que falta algo aquí."
-@export var place_gem_dialog: String = "La gema encaja a la perfección. Un estruendo retumba mientras el muro comienza a descender..."
+@export var no_gem_dialog: String = "Hay una hendidura con forma extraña... Falta algo aquí."
+@export var place_gem_dialog: String = "La gema encaja a la perfección..."
 @export var wall_node_path: NodePath
 
 var gem_placed: bool = false
@@ -50,7 +50,7 @@ func interact() -> void:
 		return
 
 	if not Inventory.has_item(required_gem):
-		DialogManager.show_dialog(no_gem_dialog)
+		DialogManager.show_dialog(no_gem_dialog, "intrigued")
 		return
 
 	_place_gem()
@@ -89,7 +89,7 @@ func _place_gem() -> void:
 	gem_light.position.y = 0.8
 	add_child(gem_light)
 
-	DialogManager.show_dialog(place_gem_dialog)
+	DialogManager.show_dialog(place_gem_dialog, "happy")
 
 	# Open the wall/passage
 	_open_wall()

@@ -8,6 +8,8 @@ func _ready() -> void:
 	_generate_environment_colliders()
 	_setup_camera()
 	_ensure_sword()
+	await get_tree().create_timer(1.0).timeout
+	_start_intro_dialog()
 
 func _setup_camera() -> void:
 	var camera = $ThirdPersonCharacter/CameraPivot/Camera3D
@@ -26,3 +28,17 @@ func _generate_environment_colliders() -> void:
 			var mesh_instance := child as MeshInstance3D
 			if mesh_instance.mesh:
 				mesh_instance.create_trimesh_collision()
+
+func _start_intro_dialog() -> void:
+	var dialogs: Array[Dictionary] = [
+		{
+			"text": "Madre mía, qué humedad hay aquí...",
+			"emotion": "sad"
+		},
+		{
+			"text": "Pero creo que veo algo de luz más adelante. ¡Ya queda menos!",
+			"emotion": "intrigued"
+		},
+	]
+
+	dialog_box.start_dialog(dialogs, "Adán")

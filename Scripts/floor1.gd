@@ -23,7 +23,7 @@ func _start_intro_dialog() -> void:
 			"emotion": "sad"
 		},
 		{
-			"text": "¿Pero qué...? ¿Dónde me he metido?",
+			"text": "Acho, ¿pero dónde me he metido?",
 			"emotion": "surprised"
 		},
 		{
@@ -35,11 +35,7 @@ func _start_intro_dialog() -> void:
 			"emotion": "sad"
 		},
 		{
-			"text": "Bueno, vale, bastante más que un pelín.",
-			"emotion": "angry"
-		},
-		{
-			"text": "En fin. Lo primero es lo primero: tengo que encontrar la forma de salir de este agujero.",
+			"text": "Bueno, lo primero es salir de este agujero.",
 			"emotion": "intrigued"
 		},
 	]

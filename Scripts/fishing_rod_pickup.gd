@@ -10,5 +10,5 @@ func _ready() -> void:
 
 func _on_interact() -> void:
 	Inventory.add_item(item_name)
-	DialogManager.show_dialog("¡Una caña de pescar! Vete tú a saber cómo ha llegado aquí. Igual puedo sacarle partido en algún estanque.")
+	DialogManager.show_dialog("¡Una caña de pescar! Vete tú a saber cómo ha llegado aquí. Que conveniente.", "surprised")
 	queue_free()

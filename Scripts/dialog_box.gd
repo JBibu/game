@@ -116,10 +116,10 @@ func start_dialog(dialog_array: Array[Dictionary], character_name: String = "") 
 	if dialogs.size() > 0:
 		_show_current_dialog()
 
-func show_dialog(text: String) -> void:
-	dialogs = [{"text": text}]
+func show_dialog(text: String, emotion: String = "") -> void:
+	dialogs = [{"text": text, "emotion": emotion if emotion != "" else "idle"}]
 	current_dialog_index = 0
-	current_character = ""
+	current_character = "Adán"
 	_show_current_dialog()
 
 func _show_current_dialog() -> void:

@@ -1,11 +1,11 @@
 [gd_scene load_steps=23 format=3 uid="uid://b4la8f46wuxlj"]
 
 [ext_resource type="PackedScene" uid="uid://dpg4nsmr2le08" path="res://Scenes/third_person_character.tscn" id="1_player"]
-[ext_resource type="PackedScene" uid="uid://m2nbymoxfykn" path="res://Assets/Blender/floor2.blend" id="2_map"]
+[ext_resource type="PackedScene" uid="uid://cke550yoc0y0l" path="res://Assets/Blender/floor2.blend" id="2_map"]
 [ext_resource type="PackedScene" path="res://Scenes/dialog_box.tscn" id="3_dialog"]
 [ext_resource type="PackedScene" path="res://Scenes/interaction_prompt.tscn" id="4_prompt"]
 [ext_resource type="PackedScene" path="res://Scenes/health_ui.tscn" id="5_health"]
-[ext_resource type="AudioStream" uid="uid://chtgniqpxnh04" path="res://Assets/Sounds/Music/01-cave.mp3" id="6_music"]
+[ext_resource type="AudioStream" uid="uid://7uhlp3vanoxw" path="res://Assets/Sounds/Music/01-cave.mp3" id="6_music"]
 [ext_resource type="Script" uid="uid://dn6u7redt6x3y" path="res://Scripts/map_collision_generator.gd" id="7_collision"]
 [ext_resource type="Script" uid="uid://c85tmbmuytigi" path="res://Scripts/floor2.gd" id="8_floor2"]
 [ext_resource type="PackedScene" path="res://Scenes/water.tscn" id="9_water"]
@@ -15,8 +15,8 @@
 [ext_resource type="PackedScene" path="res://Scenes/enemy.tscn" id="13_1lu0v"]
 [ext_resource type="PackedScene" path="res://Scenes/gem_pedestal.tscn" id="14_pedestal"]
 [ext_resource type="PackedScene" path="res://Scenes/stair_trigger.tscn" id="15_stair"]
-[ext_resource type="Texture2D" uid="uid://ou1wjfxwq480" path="res://Assets/Models/environment/Rocks_W.jpg" id="16_walls_tex"]
-[ext_resource type="PackedScene" uid="uid://s3v3eyjrueto" path="res://Assets/Models/environment/stair1.glb" id="17_stair_mesh"]
+[ext_resource type="Texture2D" uid="uid://coh7ga77i4172" path="res://Assets/Models/environment/Rocks_W.jpg" id="16_walls_tex"]
+[ext_resource type="PackedScene" uid="uid://b1jbh6hbnuuob" path="res://Assets/Models/environment/stair1.glb" id="17_stair_mesh"]
 
 [sub_resource type="Environment" id="Environment_dark"]
 background_mode = 1
@@ -66,9 +66,9 @@ transform = Transform3D(2.86, 0, 0, 0, 1.43, 0, 0, 0, 2.86, 24.418917, -3.245237
 transform = Transform3D(0.026311358, 0.6482394, 1.9129802, -0.008915122, 1.9131612, -0.6481782, -2.0198083, 3.071943e-09, 0.02778069, 8.167513, -1.7271829, -27.437939)
 
 [node name="FishingSpot" parent="." instance=ExtResource("11_fishing_spot")]
-transform = Transform3D(1.41, 0, 0, 0, 1.41, 0, 0, 0, 1.41, 15.101272, -2.5672727, -25.055359)
+transform = Transform3D(1.41, 0, 0, 0, 1.41, 0, 0, 0, 1.41, 18.467987, -2.3853683, -19.293915)
 reward_item = "gem"
-fish_dialog = "¡Por todos los...! Una gema reluciente. Alguien la debió perder aquí hace siglos. Seguro que tiene algún uso."
+fish_dialog = "¡Una gema! Seguro que sirve para ese pedestal de ahí."
 
 [node name="Torch" parent="." instance=ExtResource("12_6wmhl")]
 transform = Transform3D(1, 0, 0, 0, 0.8721376, -0.4892607, 0, 0.4892607, 0.8721376, 6.356739, 0, -15.262036)
@@ -130,4 +130,3 @@ script = ExtResource("7_collision")
 
 [node name="StairTrigger" parent="Stair" instance=ExtResource("15_stair")]
 target_scene = "res://Scenes/floor3.tscn"
-prompt_text = "Subir"

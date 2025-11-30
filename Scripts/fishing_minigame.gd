@@ -63,7 +63,10 @@ func _create_ui() -> void:
 	instruction = Label.new()
 	instruction.text = "¡Mantén pulsado para elevar la barra verde!"
 	instruction.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	instruction.add_theme_font_size_override("font_size", 24)
+	var font = load("res://Assets/Fonts/CormorantGaramond.ttf")
+	if font:
+		instruction.add_theme_font_override("font", font)
+	instruction.add_theme_font_size_override("font_size", 20)
 	vbox.add_child(instruction)
 
 	# Game area container
@@ -201,12 +204,19 @@ func _input(event: InputEvent) -> void:
 
 func start_fishing() -> void:
 	progress = 0.5
-	bar_pos = 100.0
+	bar_pos = TRACK_HEIGHT - bar_height
 	bar_velocity = 0.0
 	fish_pos = 150.0
 	fish_target = 150.0
 	fish_timer = 0.0
 	holding = false
+
+	# Connect to player damage
+	var players = get_tree().get_nodes_in_group("player")
+	if players.size() > 0:
+		var player = players[0]
+		if player.has_signal("damaged") and not player.damaged.is_connected(_on_player_hit):
+			player.damaged.connect(_on_player_hit)
 
 	_update_positions()
 	visible = true
@@ -235,3 +245,7 @@ func _lose() -> void:
 	await get_tree().create_timer(1.0).timeout
 	visible = false
 	fishing_failed.emit()
+
+func _on_player_hit() -> void:
+	if is_active:
+		_lose()

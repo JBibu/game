@@ -6,23 +6,27 @@ func _ready() -> void:
 	var slides: Array[Dictionary] = [
 		{
 			"image": load("res://Assets/Intro/finale@2x.png"),
-			"text": "Tras sortear criaturas de ultratumba y resolver antiguos enigmas..."
+			"text": "Después de sortear criaturas y resolver enigmas..."
 		},
 		{
 			"image": load("res://Assets/Intro/finale@2x.png"),
-			"text": "Adán divisó por fin la luz del exterior. La libertad estaba al alcance de su mano."
+			"text": "Por fin veo la luz. Ya casi estoy fuera."
 		},
 		{
 			"image": load("res://Assets/Intro/tasca_vacia.png"),
-			"text": "Pero al emerger a la superficie, un silencio sepulcral lo recibió."
+			"text": "Pero al salir... silencio total."
 		},
 		{
 			"image": load("res://Assets/Intro/tasca_vacia.png"),
-			"text": "La fiesta había terminado. Las calles, vacías. Todos se habían marchado a casa."
+			"text": "La fiesta ha terminado. Las calles vacías. Todos se han ido a casa."
 		},
 		{
 			"image": load("res://Assets/Intro/tasca_vacia.png"),
-			"text": "Adán suspiró, contemplando el amanecer sobre una Murcia desierta. Menuda resaca le esperaba..."
+			"text": "Espera... ¿Esa es la Catedral de Murcia? ¡He estado en la catedral todo este tiempo!"
+		},
+		{
+			"image": load("res://Assets/Intro/tasca_vacia.png"),
+			"text": "Menuda resaca me espera..."
 		},
 		{
 			"image": null,

@@ -224,13 +224,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -26.408577, 2, -21.881502)
 script = ExtResource("22_dialog_trigger")
 dialog_texts = Array[Dictionary]([{
 "emotion": "surprised",
-"text": "Espera... Que es ese ruido?"
+"text": "Espera... ¿Qué es ese ruido?"
 }, {
 "emotion": "fear",
-"text": "Suena como... gruñidos. No me gusta nada esto."
+"text": "Suena como... gruñidos. No me gusta nada."
 }, {
 "emotion": "intrigued",
-"text": "Sera mejor que tenga cuidado. Necesito encontrar algo con lo que defenderme."
+"text": "Mejor me ando con cuidado."
 }])
 character_name = "Adán"
 
