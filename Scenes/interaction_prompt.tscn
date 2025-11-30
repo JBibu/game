@@ -6,9 +6,13 @@
 script/source = "extends CanvasLayer
 
 @onready var label: Label = $Label
+var player: Node = null
 
 func _process(_delta: float) -> void:
-	var player = get_tree().current_scene.get_node_or_null(\"ThirdPersonCharacter\")
+	if not player:
+		var players := get_tree().get_nodes_in_group(\"player\")
+		if players.size() > 0:
+			player = players[0]
 	if player and player.has_method(\"get_interaction_prompt\"):
 		var prompt = player.get_interaction_prompt()
 		label.text = prompt

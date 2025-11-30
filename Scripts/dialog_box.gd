@@ -11,9 +11,7 @@ signal dialog_finished
 @onready var continue_label: Label = $Panel/ContinueLabel
 @onready var audio_player: AudioStreamPlayer = $AudioStreamPlayer
 
-var full_text: String = ""
-var current_char: int = 0
-var char_count: int = 0
+var typewriter: Typewriter
 var is_active: bool = false
 var can_advance: bool = false
 var hint_timer: float = 0.0
@@ -22,8 +20,15 @@ func _ready() -> void:
 	panel.visible = false
 	label.text = ""
 	continue_label.visible = false
+	typewriter = Typewriter.new()
+	typewriter.setup(get_tree(), text_speed, chars_per_sound)
+	typewriter.character_typed.connect(_on_character_typed)
+	typewriter.typing_finished.connect(_on_typing_finished)
 
 func _process(delta: float) -> void:
+	if is_active and typewriter.is_typing():
+		label.text = typewriter.get_current_text()
+
 	if can_advance and not continue_label.visible:
 		hint_timer += delta
 		if hint_timer >= continue_hint_delay:
@@ -34,26 +39,21 @@ func _input(event: InputEvent) -> void:
 		return
 
 	if event is InputEventKey and event.pressed and event.keycode == KEY_E:
+		get_viewport().set_input_as_handled()
 		if can_advance:
 			hide_dialog()
 		else:
-			# Skip to end
-			current_char = full_text.length()
-			label.text = full_text
-			can_advance = true
+			label.text = typewriter.skip()
 			audio_player.stop()
 
 func show_dialog(text: String) -> void:
-	full_text = text
-	current_char = 0
-	char_count = 0
 	hint_timer = 0.0
 	label.text = ""
 	continue_label.visible = false
 	panel.visible = true
 	is_active = true
 	can_advance = false
-	_type_next_char()
+	typewriter.start(text)
 
 func hide_dialog() -> void:
 	panel.visible = false
@@ -63,22 +63,9 @@ func hide_dialog() -> void:
 	audio_player.stop()
 	dialog_finished.emit()
 
-func _type_next_char() -> void:
-	if current_char >= full_text.length():
-		can_advance = true
-		return
+func _on_character_typed(_char: String) -> void:
+	audio_player.stop()
+	audio_player.play()
 
-	var c := full_text[current_char]
-	label.text += c
-	current_char += 1
-
-	# Play sound every N non-space characters
-	if c != " " and c != "\n":
-		char_count += 1
-		if char_count >= chars_per_sound:
-			char_count = 0
-			audio_player.stop()
-			audio_player.play()
-
-	# Schedule next character
-	get_tree().create_timer(text_speed).timeout.connect(_type_next_char)
+func _on_typing_finished() -> void:
+	can_advance = true

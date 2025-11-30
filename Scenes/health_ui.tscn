@@ -6,9 +6,13 @@
 script/source = "extends CanvasLayer
 
 @onready var fill: ColorRect = $HealthBar/Fill
+var player: Node = null
 
 func _process(_delta: float) -> void:
-	var player = get_tree().current_scene.get_node_or_null(\"ThirdPersonCharacter\")
+	if not player:
+		var players := get_tree().get_nodes_in_group(\"player\")
+		if players.size() > 0:
+			player = players[0]
 	if player and player.has_method(\"get_health\"):
 		var health = player.get_health()
 		var max_health = player.max_health

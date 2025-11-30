@@ -4,7 +4,7 @@
 [ext_resource type="FontFile" path="res://Assets/Fonts/CormorantGaramond.ttf" id="2_font"]
 [ext_resource type="AudioStream" path="res://Assets/Sounds/SFX/typewriter.mp3" id="3_sound"]
 
-[node name="DialogBox" type="CanvasLayer"]
+[node name="DialogBox" type="CanvasLayer" groups=["dialog"]]
 script = ExtResource("1_script")
 
 [node name="Panel" type="PanelContainer" parent="."]

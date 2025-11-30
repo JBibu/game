@@ -1,22 +1,33 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://Scripts/enemy.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://Assets/Models/skeleton/skeleton.fbx" id="2_skeleton"]
+[ext_resource type="Material" path="res://Materials/skeleton_material.tres" id="6_material"]
+[ext_resource type="PackedScene" path="res://Assets/Models/skeleton/zombie idle.fbx" id="3_idle"]
+[ext_resource type="PackedScene" path="res://Assets/Models/skeleton/zombie run.fbx" id="4_walk"]
+[ext_resource type="PackedScene" path="res://Assets/Models/skeleton/zombie attack.fbx" id="5_attack"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_enemy"]
 radius = 0.4
 height = 1.6
 
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_enemy"]
-radius = 0.4
-height = 1.6
-
 [node name="Enemy" type="CharacterBody3D"]
 script = ExtResource("1_script")
+skeleton_material = ExtResource("6_material")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
 shape = SubResource("CapsuleShape3D_enemy")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
-mesh = SubResource("CapsuleMesh_enemy")
+[node name="Model" parent="." instance=ExtResource("2_skeleton")]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+
+[node name="IdleAnim" parent="." instance=ExtResource("3_idle")]
+visible = false
+
+[node name="WalkAnim" parent="." instance=ExtResource("4_walk")]
+visible = false
+
+[node name="AttackAnim" parent="." instance=ExtResource("5_attack")]
+visible = false

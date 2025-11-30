@@ -14,4 +14,4 @@ func _ready() -> void:
 	slideshow.finished.connect(_on_intro_finished)
 
 func _on_intro_finished() -> void:
-	SceneTransition.change_scene("res://Scenes/devroom.tscn")
+	SceneTransition.change_scene("res://Scenes/floor1.tscn")

@@ -12,17 +12,22 @@ extends CharacterBody3D
 @export var camera_max_pitch: float = 45.0
 
 # Health
-@export var max_health: int = 10
-var health: int = 10
+@export var max_health: int = 100
+@export var heal_amount: int = 5
+@export var heal_interval: float = 3.0
+@export var heal_delay: float = 5.0
+var health: int = 100
 var invincible: bool = false
 var invincible_time: float = 2.0
+var time_since_damage: float = 0.0
+var heal_timer: float = 0.0
 
 # Node references
 @onready var camera_pivot: Node3D = $CameraPivot
 @onready var model: Node3D = $Model
 @onready var anim_player: AnimationPlayer = $AnimationPlayer
-@onready var flashlight_mesh: MeshInstance3D = $FlashlightMesh
-@onready var flashlight_light: SpotLight3D = $FlashlightLight
+@onready var glowstick_mesh: MeshInstance3D = $GlowstickMesh
+@onready var glowstick_light: OmniLight3D = $GlowstickLight
 
 # Internal state
 var camera_rotation: Vector2 = Vector2.ZERO
@@ -31,7 +36,6 @@ var is_emoting: bool = false
 var nearest_interactable: Interactable = null
 var skeleton: Skeleton3D = null
 var left_hand_bone_idx: int = -1
-var light_bob_time: float = 0.0
 
 const BLEND_TIME := 0.15
 
@@ -39,7 +43,7 @@ func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	health = max_health
 	_setup_animations()
-	_setup_flashlight()
+	_setup_glowstick()
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
@@ -99,7 +103,8 @@ func _physics_process(delta: float) -> void:
 			_play_anim("idle")
 
 	move_and_slide()
-	_update_flashlight(delta, direction.length() > 0.1)
+	_update_glowstick()
+	_update_healing(delta)
 
 # Animation setup
 
@@ -154,9 +159,9 @@ func _play_anim(anim_name: String) -> void:
 		anim_player.play(full_name, BLEND_TIME)
 		current_anim = anim_name
 
-# Flashlight
+# Glowstick
 
-func _setup_flashlight() -> void:
+func _setup_glowstick() -> void:
 	skeleton = _find_skeleton(model)
 	if skeleton:
 		left_hand_bone_idx = skeleton.find_bone("hand_left")
@@ -170,38 +175,26 @@ func _find_skeleton(node: Node) -> Skeleton3D:
 			return result
 	return null
 
-func _update_flashlight(delta: float, is_moving: bool) -> void:
+func _update_glowstick() -> void:
 	if not skeleton or left_hand_bone_idx == -1:
 		return
 
 	var bone_pose := skeleton.get_bone_global_pose(left_hand_bone_idx)
 	var hand_global := skeleton.global_transform * bone_pose
-	var tip_offset := hand_global.basis.y * 0.15
 
-	# Cylinder mesh attached to hand
-	if flashlight_mesh:
-		var up_offset := hand_global.basis.z * 0.04
-		var inward_offset := hand_global.basis.x * 0.05
-		flashlight_mesh.global_transform.origin = hand_global.origin + tip_offset + up_offset + inward_offset
+	# Glowstick mesh attached to hand
+	if glowstick_mesh:
+		var grip_offset := hand_global.basis.y * 0.12
+		var right_offset := hand_global.basis.x * 0.07
+		glowstick_mesh.global_transform.origin = hand_global.origin + grip_offset + right_offset
 		var rotated_basis := hand_global.basis.rotated(hand_global.basis.x, deg_to_rad(90))
-		rotated_basis = rotated_basis.rotated(hand_global.basis.y, deg_to_rad(-10))
-		rotated_basis = rotated_basis.rotated(hand_global.basis.x, deg_to_rad(-30))
-		flashlight_mesh.global_transform.basis = rotated_basis
+		glowstick_mesh.global_transform.basis = rotated_basis
 
-	# Light follows hand position, stays horizontal with subtle bobbing
-	if flashlight_light:
-		flashlight_light.global_transform.origin = hand_global.origin + tip_offset
-		var forward := model.global_transform.basis.z
-		var right := model.global_transform.basis.x
-
-		if is_moving:
-			light_bob_time += delta * 8.0
-			var bob := sin(light_bob_time) * 0.1
-			var look_dir := (forward + right * bob).normalized()
-			flashlight_light.global_transform.basis = Basis.looking_at(look_dir, Vector3.UP)
-		else:
-			light_bob_time = 0.0
-			flashlight_light.global_transform.basis = Basis.looking_at(forward, Vector3.UP)
+	# Light follows glowstick position
+	if glowstick_light:
+		var light_offset := hand_global.basis.y * 0.12
+		var right_offset := hand_global.basis.x * 0.07
+		glowstick_light.global_transform.origin = hand_global.origin + light_offset + right_offset
 
 # Interaction
 
@@ -231,6 +224,8 @@ func take_damage(amount: int) -> void:
 
 	health -= amount
 	invincible = true
+	time_since_damage = 0.0
+	heal_timer = 0.0
 
 	if model:
 		var tween := create_tween()
@@ -257,3 +252,15 @@ func _die() -> void:
 
 func get_health() -> int:
 	return health
+
+func _update_healing(delta: float) -> void:
+	if health >= max_health:
+		return
+
+	time_since_damage += delta
+
+	if time_since_damage >= heal_delay:
+		heal_timer += delta
+		if heal_timer >= heal_interval:
+			heal_timer = 0.0
+			health = min(health + heal_amount, max_health)

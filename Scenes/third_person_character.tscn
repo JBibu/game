@@ -1,11 +1,11 @@
 [gd_scene load_steps=10 format=3 uid="uid://dpg4nsmr2le08"]
 
 [ext_resource type="Script" uid="uid://vj2ffxeofks4" path="res://Scripts/third_person_character.gd" id="1_script"]
-[ext_resource type="PackedScene" uid="uid://bxar3n2ikmp73" path="res://Assets/Models/animated/male_casual.fbx" id="2_model"]
-[ext_resource type="PackedScene" uid="uid://b74lknwsq6kt5" path="res://Assets/Models/animated/idle (2).fbx" id="3_idle"]
-[ext_resource type="PackedScene" uid="uid://bf5htubjwmvad" path="res://Assets/Models/animated/walking.fbx" id="4_walk"]
-[ext_resource type="PackedScene" uid="uid://bgticl4di67c6" path="res://Assets/Models/animated/running.fbx" id="5_run"]
-[ext_resource type="PackedScene" uid="uid://yknu0pp1k6ue" path="res://Assets/Models/animated/gangnam_style.fbx" id="6_gangnam"]
+[ext_resource type="PackedScene" uid="uid://bxar3n2ikmp73" path="res://Assets/Models/player/male_casual.fbx" id="2_model"]
+[ext_resource type="PackedScene" uid="uid://b74lknwsq6kt5" path="res://Assets/Models/player/idle (2).fbx" id="3_idle"]
+[ext_resource type="PackedScene" uid="uid://bf5htubjwmvad" path="res://Assets/Models/player/walking.fbx" id="4_walk"]
+[ext_resource type="PackedScene" uid="uid://bgticl4di67c6" path="res://Assets/Models/player/running.fbx" id="5_run"]
+[ext_resource type="PackedScene" uid="uid://yknu0pp1k6ue" path="res://Assets/Models/player/gangnam_style.fbx" id="6_gangnam"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_player"]
 radius = 0.3
@@ -14,12 +14,17 @@ height = 1.8
 [sub_resource type="SphereShape3D" id="SphereShape3D_interaction"]
 radius = 2.0
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_flashlight"]
-top_radius = 0.03
-bottom_radius = 0.035
-height = 0.18
+[sub_resource type="CylinderMesh" id="CylinderMesh_glowstick"]
+top_radius = 0.02
+bottom_radius = 0.02
+height = 0.25
 
-[node name="ThirdPersonCharacter" type="CharacterBody3D"]
+[sub_resource type="StandardMaterial3D" id="Material_glowstick"]
+emission_enabled = true
+emission = Color(1.0, 0.2, 0.05, 1)
+emission_energy_multiplier = 3.0
+
+[node name="ThirdPersonCharacter" type="CharacterBody3D" groups=["player"]]
 script = ExtResource("1_script")
 
 [node name="Model" parent="." instance=ExtResource("2_model")]
@@ -57,14 +62,14 @@ collision_mask = 2
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 shape = SubResource("SphereShape3D_interaction")
 
-[node name="FlashlightMesh" type="MeshInstance3D" parent="."]
-transform = Transform3D(1.18, 0, 0, 0, -5.1579438e-08, -1.18, 0, 1.18, -5.1579438e-08, -0.3, 1, 0.3)
-mesh = SubResource("CylinderMesh_flashlight")
+[node name="GlowstickMesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, 1, 0.3)
+mesh = SubResource("CylinderMesh_glowstick")
+surface_material_override/0 = SubResource("Material_glowstick")
 
-[node name="FlashlightLight" type="SpotLight3D" parent="."]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -0.3, 1, 0.3)
-light_color = Color(1, 0.95, 0.85, 1)
-light_energy = 3.0
-spot_range = 20.0
-spot_angle = 18.0
-spot_angle_attenuation = 0.5
+[node name="GlowstickLight" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, 1, 0.3)
+light_color = Color(1.0, 0.2, 0.05, 1)
+light_energy = 2.0
+omni_range = 12.0
+omni_attenuation = 1.5
