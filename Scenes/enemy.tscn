@@ -8,18 +8,19 @@
 [ext_resource type="PackedScene" path="res://Assets/Models/skeleton/zombie attack.fbx" id="5_attack"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_enemy"]
-radius = 0.4
-height = 1.6
+radius = 0.42
+height = 1.68
 
 [node name="Enemy" type="CharacterBody3D"]
 script = ExtResource("1_script")
 skeleton_material = ExtResource("6_material")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.84, 0)
 shape = SubResource("CapsuleShape3D_enemy")
 
 [node name="Model" parent="." instance=ExtResource("2_skeleton")]
+transform = Transform3D(1.05, 0, 0, 0, 1.05, 0, 0, 0, 1.05, 0, 0, 0)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 

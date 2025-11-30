@@ -10,10 +10,10 @@
 
 [sub_resource type="Environment" id="Environment_dark"]
 background_mode = 1
-background_color = Color(0.05, 0.05, 0.08, 1)
+background_color = Color(0, 0, 0, 1)
 ambient_light_source = 2
-ambient_light_color = Color(0.1, 0.1, 0.15, 1)
-ambient_light_energy = 0.4
+ambient_light_color = Color(0, 0, 0, 1)
+ambient_light_energy = 0.0
 
 [sub_resource type="CameraAttributesPractical" id="CameraAttributes_dark"]
 
