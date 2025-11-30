@@ -3,6 +3,7 @@ extends Node
 @onready var slideshow = $EndingSlideshow
 
 func _ready() -> void:
+	SpeedrunTimer.stop_timer()
 	var slides: Array[Dictionary] = [
 		{
 			"image": load("res://Assets/Intro/finale@2x.png"),

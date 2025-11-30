@@ -4,6 +4,8 @@ extends Node3D
 
 func _ready() -> void:
 	_generate_environment_colliders()
+	SpeedrunTimer.reset()
+	SpeedrunTimer.start_timer()
 	# Wait a moment before starting dialog
 	await get_tree().create_timer(1.0).timeout
 	_start_intro_dialog()
